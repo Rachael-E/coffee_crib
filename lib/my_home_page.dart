@@ -17,7 +17,6 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> readJson() async {
     final String response =
         await rootBundle.loadString('assets/common_coffee_countries.geojson');
-// final coffeeContries = welcomeFromJson(response);
     final data = await json.decode(response);
     setState(() {
       _items = data["features"];
@@ -52,8 +51,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Padding(
                   padding: const EdgeInsets.all(20),
                   child: SizedBox(
+                  
                     height: 100,
-                    width: 150,
+                    width: 200,
                     child: Column(
                       children: [
                         Text(

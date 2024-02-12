@@ -33,7 +33,7 @@ class _MapPageState extends State<MapPage> {
 
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => MyHomePage()),
+            MaterialPageRoute(builder: (context) => const MyHomePage()),
           );
         },
         child: const Icon(Icons.home, color: Colors.white),

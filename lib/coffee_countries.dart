@@ -73,13 +73,13 @@ class Geometry {
 }
 
 enum GeometryType {
-    MULTI_POLYGON,
-    POLYGON
+    multiPolygon,
+    polygon
 }
 
 final geometryTypeValues = EnumValues({
-    "MultiPolygon": GeometryType.MULTI_POLYGON,
-    "Polygon": GeometryType.POLYGON
+    "MultiPolygon": GeometryType.multiPolygon,
+    "Polygon": GeometryType.polygon
 });
 
 class Properties {
@@ -103,11 +103,11 @@ class Properties {
 }
 
 enum FeatureType {
-    FEATURE
+    feature
 }
 
 final featureTypeValues = EnumValues({
-    "Feature": FeatureType.FEATURE
+    "Feature": FeatureType.feature
 });
 
 class EnumValues<T> {
