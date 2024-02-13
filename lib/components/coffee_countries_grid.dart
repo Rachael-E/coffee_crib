@@ -1,13 +1,14 @@
+import 'package:coffee_crib/models/coffee_countries.dart';
 import 'package:flutter/material.dart';
 import 'package:coffee_crib/about_page.dart';
 
 class CoffeeCountriesGrid extends StatelessWidget {
   const CoffeeCountriesGrid({
     super.key,
-    required List items,
+    required List<CoffeeFeature> items,
   }) : _items = items;
 
-  final List _items;
+  final List<CoffeeFeature> _items;
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +17,8 @@ class CoffeeCountriesGrid extends StatelessWidget {
       crossAxisCount: 2,
       // padding: const EdgeInsets.all(20),
       children: List.generate(_items.length, (index) {
-        var properties = _items[index]["properties"];
+        // var properties = _items[index]["properties"];
+        var coffeeCountry = _items[index];
         return Center(
           child: Card(
             margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
@@ -26,11 +28,19 @@ class CoffeeCountriesGrid extends StatelessWidget {
               splashColor:
                   const Color.fromARGB(255, 221, 210, 199).withAlpha(30),
               onTap: () {
+
                 Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const AboutPage()),
-                );
-                debugPrint(properties["Description"]);
+                context,
+                MaterialPageRoute(
+                builder: (context) => AboutPage(coffeeFeature: coffeeCountry),
+            ),
+          );
+
+
+
+                  debugPrint(coffeeCountry.properties.admin);
+
+                // debugPrint(properties["Description"]);
               },
               child: Padding(
                 padding: const EdgeInsets.all(20),
@@ -40,7 +50,8 @@ class CoffeeCountriesGrid extends StatelessWidget {
                   child: Column(
                     children: [
                       Text(
-                        properties["ADMIN"],
+                        coffeeCountry.properties.admin,
+                        // properties.properties.admin,
                         // 'Item $_items[$index]. ',
                         style: Theme.of(context)
                             .textTheme

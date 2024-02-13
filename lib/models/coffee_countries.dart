@@ -85,20 +85,24 @@ final geometryTypeValues = EnumValues({
 class Properties {
     String admin;
     String isoA3;
+    String description;
 
     Properties({
         required this.admin,
         required this.isoA3,
+        required this.description,
     });
 
     factory Properties.fromJson(Map<String, dynamic> json) => Properties(
         admin: json["ADMIN"],
         isoA3: json["ISO_A3"],
+        description: json["Description"],
     );
 
     Map<String, dynamic> toJson() => {
         "ADMIN": admin,
         "ISO_A3": isoA3,
+        "Description": description,
     };
 }
 
