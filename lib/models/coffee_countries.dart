@@ -31,7 +31,7 @@ class CoffeeCountries {
 class CoffeeFeature {
     FeatureType type;
     Properties properties;
-    Geometry geometry;
+    CoffeeCountryGeometry geometry;
 
     CoffeeFeature({
         required this.type,
@@ -42,7 +42,7 @@ class CoffeeFeature {
     factory CoffeeFeature.fromJson(Map<String, dynamic> json) => CoffeeFeature(
         type: featureTypeValues.map[json["type"]]!,
         properties: Properties.fromJson(json["properties"]),
-        geometry: Geometry.fromJson(json["geometry"]),
+        geometry: CoffeeCountryGeometry.fromJson(json["geometry"]),
     );
 
     Map<String, dynamic> toJson() => {
@@ -52,16 +52,16 @@ class CoffeeFeature {
     };
 }
 
-class Geometry {
+class CoffeeCountryGeometry {
     GeometryType type;
     List<List<List<dynamic>>> coordinates;
 
-    Geometry({
+    CoffeeCountryGeometry({
         required this.type,
         required this.coordinates,
     });
 
-    factory Geometry.fromJson(Map<String, dynamic> json) => Geometry(
+    factory CoffeeCountryGeometry.fromJson(Map<String, dynamic> json) => CoffeeCountryGeometry(
         type: geometryTypeValues.map[json["type"]]!,
         coordinates: List<List<List<dynamic>>>.from(json["coordinates"].map((x) => List<List<dynamic>>.from(x.map((x) => List<dynamic>.from(x.map((x) => x)))))),
     );

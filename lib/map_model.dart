@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:coffee_crib/my_home_page.dart';
 
 // Define MapModel to store the loaded ArcGISMap
 class MapModel extends ChangeNotifier {
