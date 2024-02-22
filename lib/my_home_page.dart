@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:coffee_crib/models/coffee_countries.dart';
 import 'package:coffee_crib/map_page.dart';
-import 'package:provider/provider.dart';
 import 'package:arcgis_maps/arcgis_maps.dart';
 
 class MyHomePage extends StatefulWidget {

@@ -20,7 +20,7 @@ class MapPageState extends State<MapPage> {
 
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISChartedTerritory);
     map.initialViewpoint = Viewpoint.withLatLongScale(
-        latitude: 4.671, longitude: -73.765, scale: 10000000);
+        latitude: 4.671, longitude: -73.765, scale: 100000000);
     _mapViewController.arcGISMap = map;
     _mapViewController.graphicsOverlays.add(graphicsOverlay);
   }
