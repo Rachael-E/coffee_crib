@@ -2,9 +2,10 @@ import 'package:coffee_crib/models/coffee_countries.dart';
 import 'package:flutter/material.dart';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'dart:math';
+import 'package:intl/intl.dart';
 
 class MapPage extends StatefulWidget {
-  MapPage({super.key});
+  const MapPage({super.key});
 
   @override
   State<MapPage> createState() => MapPageState();
@@ -57,14 +58,16 @@ class MapPageState extends State<MapPage> {
 
     if (context.mounted) {
       final graphic = identifyGraphicsOverlayResult.graphics.first;
-      final countryDescription = graphic.attributes['description'];
+      double countryBagsProducedDouble = double.parse(graphic.attributes['coffeeCountryBags']);
+      var formatter = NumberFormat('#,###,000');
+      final countryBagsProduced = formatter.format(countryBagsProducedDouble);
       final countryName = graphic.attributes['name'];
 
       showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
-              title: Text(countryName), content: Text(countryDescription));
+              title: Text(countryName), content: Text('$countryName produces $countryBagsProduced bags of coffee annually.'));
         },
       );
     }
@@ -102,14 +105,14 @@ class MapPageState extends State<MapPage> {
 
     final graphic = Graphic(geometry: geometry, symbol: _simpleFillSymbol);
 
-    final coffeeCountryDescription = <String, dynamic>{
-      'description': coffeeFeature.properties.description
+    final coffeeCountryBags = <String, dynamic>{
+      'coffeeCountryBags': coffeeFeature.properties.coffeeProduction
     };
     final coffeeCountryName = <String, dynamic>{
       'name': coffeeFeature.properties.admin
     };
 
-    graphic.attributes.addEntries(coffeeCountryDescription.entries);
+    graphic.attributes.addEntries(coffeeCountryBags.entries);
     graphic.attributes.addEntries(coffeeCountryName.entries);
 
     graphicsOverlay.graphics.add(graphic);

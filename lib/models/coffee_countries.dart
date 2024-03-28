@@ -1,54 +1,98 @@
 // To parse this JSON data, do
 //
-//     final welcome = welcomeFromJson(jsonString);
+//     final coffeeCountries = coffeeCountriesFromJson(jsonString);
 
 import 'dart:convert';
 
-CoffeeCountries welcomeFromJson(String str) => CoffeeCountries.fromJson(json.decode(str));
+CoffeeCountries coffeeCountriesDataFromJson(String str) => CoffeeCountries.fromJson(json.decode(str));
 
-String welcomeToJson(CoffeeCountries data) => json.encode(data.toJson());
+String coffeeCountriesToJson(CoffeeCountries data) => json.encode(data.toJson());
 
 class CoffeeCountries {
     String type;
+    Crs crs;
     List<CoffeeFeature> features;
 
     CoffeeCountries({
         required this.type,
+        required this.crs,
         required this.features,
     });
 
     factory CoffeeCountries.fromJson(Map<String, dynamic> json) => CoffeeCountries(
         type: json["type"],
+        crs: Crs.fromJson(json["crs"]),
         features: List<CoffeeFeature>.from(json["features"].map((x) => CoffeeFeature.fromJson(x))),
     );
 
     Map<String, dynamic> toJson() => {
         "type": type,
+        "crs": crs.toJson(),
         "features": List<dynamic>.from(features.map((x) => x.toJson())),
+    };
+}
+
+class Crs {
+    String type;
+    CrsProperties properties;
+
+    Crs({
+        required this.type,
+        required this.properties,
+    });
+
+    factory Crs.fromJson(Map<String, dynamic> json) => Crs(
+        type: json["type"],
+        properties: CrsProperties.fromJson(json["properties"]),
+    );
+
+    Map<String, dynamic> toJson() => {
+        "type": type,
+        "properties": properties.toJson(),
+    };
+}
+
+class CrsProperties {
+    String name;
+
+    CrsProperties({
+        required this.name,
+    });
+
+    factory CrsProperties.fromJson(Map<String, dynamic> json) => CrsProperties(
+        name: json["name"],
+    );
+
+    Map<String, dynamic> toJson() => {
+        "name": name,
     };
 }
 
 class CoffeeFeature {
     FeatureType type;
-    Properties properties;
+    int id;
     CoffeeCountryGeometry geometry;
+    FeatureProperties properties;
 
     CoffeeFeature({
         required this.type,
-        required this.properties,
+        required this.id,
         required this.geometry,
+        required this.properties,
     });
 
     factory CoffeeFeature.fromJson(Map<String, dynamic> json) => CoffeeFeature(
         type: featureTypeValues.map[json["type"]]!,
-        properties: Properties.fromJson(json["properties"]),
+        id: json["id"],
         geometry: CoffeeCountryGeometry.fromJson(json["geometry"]),
+        properties: FeatureProperties.fromJson(json["properties"]),
     );
 
     Map<String, dynamic> toJson() => {
         "type": featureTypeValues.reverse[type],
-        "properties": properties.toJson(),
+        "id": id,
         "geometry": geometry.toJson(),
+        "properties": properties.toJson(),
     };
 }
 
@@ -73,45 +117,53 @@ class CoffeeCountryGeometry {
 }
 
 enum GeometryType {
-    multiPolygon,
-    polygon
+    MULTI_POLYGON,
+    POLYGON
 }
 
 final geometryTypeValues = EnumValues({
-    "MultiPolygon": GeometryType.multiPolygon,
-    "Polygon": GeometryType.polygon
+    "MultiPolygon": GeometryType.MULTI_POLYGON,
+    "Polygon": GeometryType.POLYGON
 });
 
-class Properties {
+class FeatureProperties {
     String admin;
     String isoA3;
-    String description;
+    int objectId;
+    dynamic description;
+    String coffeeProduction;
 
-    Properties({
+    FeatureProperties({
         required this.admin,
         required this.isoA3,
+        required this.objectId,
         required this.description,
+        required this.coffeeProduction,
     });
 
-    factory Properties.fromJson(Map<String, dynamic> json) => Properties(
+    factory FeatureProperties.fromJson(Map<String, dynamic> json) => FeatureProperties(
         admin: json["ADMIN"],
         isoA3: json["ISO_A3"],
+        objectId: json["ObjectId"],
         description: json["Description"],
+        coffeeProduction: json["Coffee_Production"],
     );
 
     Map<String, dynamic> toJson() => {
         "ADMIN": admin,
         "ISO_A3": isoA3,
+        "ObjectId": objectId,
         "Description": description,
+        "Coffee_Production": coffeeProduction,
     };
 }
 
 enum FeatureType {
-    feature
+    FEATURE
 }
 
 final featureTypeValues = EnumValues({
-    "Feature": FeatureType.feature
+    "Feature": FeatureType.FEATURE
 });
 
 class EnumValues<T> {

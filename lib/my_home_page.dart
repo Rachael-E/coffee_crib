@@ -16,6 +16,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   CoffeeCountries? _coffeeCountries;
   final GlobalKey<MapPageState> mapPageKey = GlobalKey<MapPageState>();
+  Map<String, bool> drawnCoffeeCountries = {}; // Map to track drawn coffee countries
 
   @override
   Widget build(BuildContext context) {
@@ -28,40 +29,91 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Column(
         children: <Widget>[
           Expanded(
-            flex: 3,
+            flex: 2,
             child: Container(
-              child: _coffeeCountries != null
-                  ? GridView.count(
-                      childAspectRatio: 6 / 3,
+              child: _coffeeCountries !=  null 
+              ? GridView.count(
+                      childAspectRatio: 1 / .5,
                       crossAxisCount: 4,
                       padding: EdgeInsets.zero,
                       children: List.generate(_coffeeCountries!.features.length,
                           (index) {
                         var coffeeCountry = _coffeeCountries!.features[index];
                         drawCoffeeCountriesPolygons(coffeeCountry);
-                        return Center(
-                          child: Card(
-                            margin: const EdgeInsets.symmetric(
-                                vertical: 10, horizontal: 10),
-                            color: const Color.fromARGB(255, 191, 92, 30),
-                            elevation: 10,
-                            child: InkWell(
-                              splashColor:
-                                  const Color.fromARGB(255, 221, 210, 199)
-                                      .withAlpha(30),
-                              onTap: () {
-                                mapPageKey.currentState?.zoomToCountry(coffeeCountry);
-                              },
-                              child:
-                                  SizedBoxPadding(coffeeCountry: coffeeCountry),
+                                            return GestureDetector(
+                      onTap: () {
+                        mapPageKey.currentState?.zoomToCountry(coffeeCountry);
+                      },
+                      child: Card(
+                        child: Container(
+                          padding: const EdgeInsets.all(8.0),
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              coffeeCountry.properties.admin,
+                              overflow: TextOverflow.visible,
+                              maxLines: 3,
+                              style: const TextStyle(fontSize: 13.0),
                             ),
                           ),
-                        );
-                      }),
-                    )
-                  : const Center(child: CircularProgressIndicator()), // if coffee countries don't load
-            ),
+                        ),
+                      ),
+                    );
+                          }),
+                          
+  //             ? GridView.builder(
+  //               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+  //                 crossAxisCount: 4
+  //                 ),
+  //                 itemCount: _coffeeCountries!.features.length,
+  //                 itemBuilder: (context, index) {
+  //                   var coffeeCountry = _coffeeCountries!.features[index];
+  //                     if (!drawnCoffeeCountries.containsKey(coffeeCountry.id) || !drawnCoffeeCountries[coffeeCountry.id]!) {
+  //   drawCoffeeCountriesPolygons(coffeeCountry);
+  //   drawnCoffeeCountries[coffeeCountry.id.toString()] = true;
+  // }
+  //                   print("triggered");
+  // },
+
+                  // },
+              
+            ) : const Center(child: CircularProgressIndicator()), // if coffee countries don't load
+            )
+            
+            // child: Container(
+            //   child: _coffeeCountries != null
+            //       ? GridView.count(
+            //           childAspectRatio: 6 / 3,
+            //           crossAxisCount: 4,
+            //           padding: EdgeInsets.zero,
+            //           children: List.generate(_coffeeCountries!.features.length,
+            //               (index) {
+            //             var coffeeCountry = _coffeeCountries!.features[index];
+            //             drawCoffeeCountriesPolygons(coffeeCountry);
+            //             return Center(
+            //               child: Card(
+            //                 margin: const EdgeInsets.symmetric(
+            //                     vertical: 1, horizontal: 1),
+            //                 color: const Color.fromARGB(255, 191, 92, 30),
+            //                 elevation: 10,
+            //                 child: InkWell(
+            //                   splashColor:
+            //                       const Color.fromARGB(255, 221, 210, 199)
+            //                           .withAlpha(30),
+            //                   onTap: () {
+            //                     mapPageKey.currentState?.zoomToCountry(coffeeCountry);
+            //                   },
+            //                   child:
+            //                       SizedBoxPadding(coffeeCountry: coffeeCountry),
+            //                 ),
+            //               ),
+            //             );
+            //           }),
+            //         )
+            //       : const Center(child: CircularProgressIndicator()), // if coffee countries don't load
+            // ),
           ),
+          const Divider(),
           Expanded(
             flex: 7,
             child: MapPage(key: mapPageKey),
@@ -84,11 +136,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void loadCoffeeCountries() {
     CoffeeCountries coffeeCountriesFromJson;
-    String jsonFilePath = 'assets/common_coffee_countries.geojson';
+    // String jsonFilePath = 'assets/common_coffee_countries.geojson';
+    String jsonFilePath = 'assets/FullCoffeeCountries_GEOJSON.geojson';
 
     // Read the JSON file
     rootBundle.loadString(jsonFilePath).then((String contents) {
-      coffeeCountriesFromJson = welcomeFromJson(contents);
+      coffeeCountriesFromJson = coffeeCountriesDataFromJson(contents);
 
       // Parse the JSON data
       setState(() {

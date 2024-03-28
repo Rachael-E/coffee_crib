@@ -16,7 +16,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
       child: ListView(padding: EdgeInsets.zero, children: <Widget>[
         const DrawerHeader(
           decoration: BoxDecoration(
-            color: Color.fromARGB(255, 147, 226, 175),
+            color: Color.fromARGB(255, 190, 214, 174),
           ),
           child: Text(
             'Coffee Crib',
@@ -27,8 +27,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
           ),
         ),
         ListTile(
-          leading: const Icon(Icons.message),
-          title: const Text('About'),
+          leading: const Icon(Icons.info),
+          title: const Text('Built with the ArcGIS Maps SDK for Flutter'),
           onTap: () {
             setState(() {
               selectedPage = 'Messages';
