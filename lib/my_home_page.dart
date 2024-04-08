@@ -1,5 +1,4 @@
 import 'package:coffee_crib/components/custom_drawer.dart';
-import 'package:coffee_crib/components/sized_box_padding.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:coffee_crib/models/coffee_countries.dart';
@@ -155,9 +154,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void drawCoffeeCountriesPolygons(CoffeeFeature feature) {
     var polygonBuilder =
-        PolygonBuilder.fromSpatialReference(SpatialReference.wgs84());
+        PolygonBuilder.fromSpatialReference(SpatialReference.wgs84);
     var polygonBuilderFromParts =
-        PolygonBuilder.fromSpatialReference(SpatialReference.wgs84());
+        PolygonBuilder.fromSpatialReference(SpatialReference.wgs84);
 
     var coffeeFeatureCoordinates = feature.geometry.coordinates;
 
@@ -170,7 +169,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ArcGISPoint(
             x: lat,
             y: long,
-            spatialReference: SpatialReference.wgs84(),
+            spatialReference: SpatialReference.wgs84,
           ),
         );
       }
@@ -179,7 +178,7 @@ class _MyHomePageState extends State<MyHomePage> {
       // if country is a multipart
       for (var part in coffeeFeatureCoordinates) {
         var mutablePart =
-            MutablePart.withSpatialReference(SpatialReference.wgs84());
+            MutablePart.withSpatialReference(SpatialReference.wgs84);
         for (var coordinates in part) {
           for (var coordinate in coordinates) {
             var lat = coordinate[0];
@@ -188,7 +187,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ArcGISPoint(
                 x: lat,
                 y: long,
-                spatialReference: SpatialReference.wgs84(),
+                spatialReference: SpatialReference.wgs84,
               ),
             );
           }
