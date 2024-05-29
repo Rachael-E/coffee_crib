@@ -46,40 +46,55 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
           ),
-          const Divider(),
+          const Divider(height: 1),
           // Coffee countries list at the bottom
           Expanded(
             flex: 3,
-            child: _coffeeCountries != null
-                ? GridView.builder(
-                    padding: EdgeInsets.zero,
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2, // Two columns
-                      childAspectRatio: 3, // Adjust the ratio to fit your design
-                    ),
-                    itemCount: _coffeeCountries!.features.length,
-                    itemBuilder: (context, index) {
-                      var coffeeCountry = _coffeeCountries!.features[index];
-                      return GestureDetector(
-                        onTap: () {
-                          mapPageKey.currentState
-                              ?.zoomToCountry(coffeeCountry);
-                        },
-                        child: Card(
-                          child: Container(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              coffeeCountry.properties.admin,
-                              overflow: TextOverflow.visible,
-                              maxLines: 3,
-                              style: const TextStyle(fontSize: 13.0),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: _coffeeCountries != null
+                  ? GridView.builder(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2, // Two columns
+                        childAspectRatio: 2.5, // Adjust the ratio to fit your design
+                        crossAxisSpacing: 8.0,
+                        mainAxisSpacing: 8.0,
+                      ),
+                      itemCount: _coffeeCountries!.features.length,
+                      itemBuilder: (context, index) {
+                        var coffeeCountry = _coffeeCountries!.features[index];
+                        return GestureDetector(
+                          onTap: () {
+                            mapPageKey.currentState?.zoomToCountry(coffeeCountry);
+                          },
+                          child: Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15.0),
+                            ),
+                            elevation: 5,
+                            child: Container(
+                              padding: const EdgeInsets.all(5.0),
+                              child: Center(
+                                child: Text(
+                                  coffeeCountry.properties.admin,
+                                  textAlign: TextAlign.center,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
+                                  style: TextStyle(
+                                    fontSize: 14.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: Theme.of(context).primaryColorDark,
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    },
-                  )
-                : const Center(child: CircularProgressIndicator()), // if coffee countries don't load
+                        );
+                      },
+                    )
+                  : const Center(child: CircularProgressIndicator()), // if coffee countries don't load
+            ),
           ),
         ],
       ),
