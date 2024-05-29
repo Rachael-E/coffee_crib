@@ -51,13 +51,13 @@ class _MyHomePageState extends State<MyHomePage> {
           Expanded(
             flex: 3,
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(5.0),
               child: _coffeeCountries != null
                   ? GridView.builder(
-                      padding: const EdgeInsets.only(bottom: 8.0),
+                      padding: const EdgeInsets.only(bottom: 5.0),
                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2, // Two columns
-                        childAspectRatio: 2.5, // Adjust the ratio to fit your design
+                        childAspectRatio: 3, // Adjust the ratio to fit your design
                         crossAxisSpacing: 8.0,
                         mainAxisSpacing: 8.0,
                       ),
@@ -117,7 +117,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
       // Parse the JSON data
       setState(() {
-        _coffeeCountries ??= coffeeCountriesFromJson;
+        _coffeeCountries = coffeeCountriesFromJson;
+        _coffeeCountries!.features.sort((a, b) =>
+            a.properties.admin.compareTo(b.properties.admin)); // Sort alphabetically
         drawAllCoffeeCountries();
       });
     }).catchError((error) {
