@@ -27,10 +27,24 @@ class _MyHomePageState extends State<MyHomePage> {
       drawer: const CustomDrawer(),
       body: Column(
         children: <Widget>[
-          // Map widget at the top
+          // Map widget and FloatingActionButton at the top in a Stack
           Expanded(
             flex: 7,
-            child: MapPage(key: mapPageKey),
+            child: Stack(
+              children: [
+                MapPage(key: mapPageKey),
+                Positioned(
+                  bottom: 16,
+                  right: 16,
+                  child: FloatingActionButton(
+                    child: const Icon(Icons.map, color: Colors.white),
+                    onPressed: () {
+                      mapPageKey.currentState?.showWorldView();
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
           const Divider(),
           // Coffee countries list at the bottom
@@ -68,12 +82,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 : const Center(child: CircularProgressIndicator()), // if coffee countries don't load
           ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.map, color: Colors.white),
-        onPressed: () {
-          mapPageKey.currentState?.showWorldView();
-        },
       ),
     );
   }
