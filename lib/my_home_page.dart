@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:coffee_crib/models/coffee_countries.dart';
 import 'package:coffee_crib/map_page.dart';
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -15,6 +16,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   CoffeeCountries? _coffeeCountries;
   final GlobalKey<MapPageState> mapPageKey = GlobalKey<MapPageState>();
+  final PanelController _panelController = PanelController();
   Map<String, bool> drawnCoffeeCountries = {}; // Map to track drawn coffee countries
 
   @override
@@ -25,76 +27,68 @@ class _MyHomePageState extends State<MyHomePage> {
         title: const Text("Home Page"),
       ),
       drawer: const CustomDrawer(),
-      body: Column(
-        children: <Widget>[
-          // Map widget and FloatingActionButton at the top in a Stack
-          Expanded(
-            flex: 7,
-            child: Stack(
-              children: [
-                MapPage(key: mapPageKey),
-                Positioned(
-                  bottom: 16,
-                  right: 16,
-                  child: FloatingActionButton(
-                    child: const Icon(Icons.map, color: Colors.white),
-                    onPressed: () {
-                      mapPageKey.currentState?.showWorldView();
-                    },
-                  ),
-                ),
-              ],
+      body: Stack(
+        children: [
+          // Map widget in the background
+          MapPage(key: mapPageKey),
+          Positioned(
+            bottom: 16,
+            right: 16,
+            child: FloatingActionButton(
+              child: const Icon(Icons.list, color: Colors.white),
+              onPressed: () {
+                _panelController.open();
+              },
             ),
           ),
-          const Divider(height: 1),
-          // Coffee countries list at the bottom
-          Expanded(
-            flex: 3,
-            child: Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: _coffeeCountries != null
-                  ? GridView.builder(
-                      padding: const EdgeInsets.only(bottom: 5.0),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2, // Two columns
-                        childAspectRatio: 3, // Adjust the ratio to fit your design
-                        crossAxisSpacing: 8.0,
-                        mainAxisSpacing: 8.0,
-                      ),
-                      itemCount: _coffeeCountries!.features.length,
-                      itemBuilder: (context, index) {
-                        var coffeeCountry = _coffeeCountries!.features[index];
-                        return GestureDetector(
-                          onTap: () {
-                            mapPageKey.currentState?.zoomToCountry(coffeeCountry);
-                          },
-                          child: Card(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15.0),
-                            ),
-                            elevation: 5,
-                            child: Container(
-                              padding: const EdgeInsets.all(5.0),
-                              child: Center(
-                                child: Text(
-                                  coffeeCountry.properties.admin,
-                                  textAlign: TextAlign.center,
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 2,
-                                  style: TextStyle(
-                                    fontSize: 14.0,
-                                    fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).primaryColorDark,
-                                  ),
+          // SlidingUpPanel for the coffee countries list
+          SlidingUpPanel(
+            controller: _panelController,
+            minHeight: 0,
+            maxHeight: MediaQuery.of(context).size.height * 0.4,
+            panel: _coffeeCountries != null
+                ? GridView.builder(
+                    padding: const EdgeInsets.all(8.0),
+                    physics: NeverScrollableScrollPhysics(),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2, // Two columns
+                      childAspectRatio: 3, // Adjust the ratio to fit your design
+                      crossAxisSpacing: 8.0,
+                      mainAxisSpacing: 8.0,
+                    ),
+                    itemCount: _coffeeCountries!.features.length,
+                    itemBuilder: (context, index) {
+                      var coffeeCountry = _coffeeCountries!.features[index];
+                      return GestureDetector(
+                        onTap: () {
+                          mapPageKey.currentState?.zoomToCountry(coffeeCountry);
+                        },
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                          elevation: 5,
+                          child: Container(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Center(
+                              child: Text(
+                                coffeeCountry.properties.admin,
+                                textAlign: TextAlign.center,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
+                                style: TextStyle(
+                                  fontSize: 14.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).primaryColorDark,
                                 ),
                               ),
                             ),
                           ),
-                        );
-                      },
-                    )
-                  : const Center(child: CircularProgressIndicator()), // if coffee countries don't load
-            ),
+                        ),
+                      );
+                    },
+                  )
+                : const Center(child: CircularProgressIndicator()), // if coffee countries don't load
           ),
         ],
       ),
