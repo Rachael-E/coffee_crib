@@ -27,27 +27,33 @@ class _MyHomePageState extends State<MyHomePage> {
       drawer: const CustomDrawer(),
       body: Column(
         children: <Widget>[
+          // Map widget at the top
           Expanded(
-            flex: 2,
-            child: Container(
-              child: _coffeeCountries !=  null 
-              ? GridView.count(
-                      childAspectRatio: 1 / .5,
-                      crossAxisCount: 4,
-                      padding: EdgeInsets.zero,
-                      children: List.generate(_coffeeCountries!.features.length,
-                          (index) {
-                        var coffeeCountry = _coffeeCountries!.features[index];
-                        drawCoffeeCountriesPolygons(coffeeCountry);
-                                            return GestureDetector(
-                      onTap: () {
-                        mapPageKey.currentState?.zoomToCountry(coffeeCountry);
-                      },
-                      child: Card(
-                        child: Container(
-                          padding: const EdgeInsets.all(8.0),
-                          child: FittedBox(
-                            fit: BoxFit.scaleDown,
+            flex: 7,
+            child: MapPage(key: mapPageKey),
+          ),
+          const Divider(),
+          // Coffee countries list at the bottom
+          Expanded(
+            flex: 3,
+            child: _coffeeCountries != null
+                ? GridView.builder(
+                    padding: EdgeInsets.zero,
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2, // Two columns
+                      childAspectRatio: 3, // Adjust the ratio to fit your design
+                    ),
+                    itemCount: _coffeeCountries!.features.length,
+                    itemBuilder: (context, index) {
+                      var coffeeCountry = _coffeeCountries!.features[index];
+                      return GestureDetector(
+                        onTap: () {
+                          mapPageKey.currentState
+                              ?.zoomToCountry(coffeeCountry);
+                        },
+                        child: Card(
+                          child: Container(
+                            padding: const EdgeInsets.all(8.0),
                             child: Text(
                               coffeeCountry.properties.admin,
                               overflow: TextOverflow.visible,
@@ -56,74 +62,19 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                           ),
                         ),
-                      ),
-                    );
-                          }),
-                          
-  //             ? GridView.builder(
-  //               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-  //                 crossAxisCount: 4
-  //                 ),
-  //                 itemCount: _coffeeCountries!.features.length,
-  //                 itemBuilder: (context, index) {
-  //                   var coffeeCountry = _coffeeCountries!.features[index];
-  //                     if (!drawnCoffeeCountries.containsKey(coffeeCountry.id) || !drawnCoffeeCountries[coffeeCountry.id]!) {
-  //   drawCoffeeCountriesPolygons(coffeeCountry);
-  //   drawnCoffeeCountries[coffeeCountry.id.toString()] = true;
-  // }
-  //                   print("triggered");
-  // },
-
-                  // },
-              
-            ) : const Center(child: CircularProgressIndicator()), // if coffee countries don't load
-            )
-            
-            // child: Container(
-            //   child: _coffeeCountries != null
-            //       ? GridView.count(
-            //           childAspectRatio: 6 / 3,
-            //           crossAxisCount: 4,
-            //           padding: EdgeInsets.zero,
-            //           children: List.generate(_coffeeCountries!.features.length,
-            //               (index) {
-            //             var coffeeCountry = _coffeeCountries!.features[index];
-            //             drawCoffeeCountriesPolygons(coffeeCountry);
-            //             return Center(
-            //               child: Card(
-            //                 margin: const EdgeInsets.symmetric(
-            //                     vertical: 1, horizontal: 1),
-            //                 color: const Color.fromARGB(255, 191, 92, 30),
-            //                 elevation: 10,
-            //                 child: InkWell(
-            //                   splashColor:
-            //                       const Color.fromARGB(255, 221, 210, 199)
-            //                           .withAlpha(30),
-            //                   onTap: () {
-            //                     mapPageKey.currentState?.zoomToCountry(coffeeCountry);
-            //                   },
-            //                   child:
-            //                       SizedBoxPadding(coffeeCountry: coffeeCountry),
-            //                 ),
-            //               ),
-            //             );
-            //           }),
-            //         )
-            //       : const Center(child: CircularProgressIndicator()), // if coffee countries don't load
-            // ),
-          ),
-          const Divider(),
-          Expanded(
-            flex: 7,
-            child: MapPage(key: mapPageKey),
+                      );
+                    },
+                  )
+                : const Center(child: CircularProgressIndicator()), // if coffee countries don't load
           ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
-          child: const Icon(Icons.map, color: Colors.white),
-          onPressed: () {
-            mapPageKey.currentState?.showWorldView();
-          }),
+        child: const Icon(Icons.map, color: Colors.white),
+        onPressed: () {
+          mapPageKey.currentState?.showWorldView();
+        },
+      ),
     );
   }
 
@@ -135,7 +86,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void loadCoffeeCountries() {
     CoffeeCountries coffeeCountriesFromJson;
-    // String jsonFilePath = 'assets/common_coffee_countries.geojson';
     String jsonFilePath = 'assets/FullCoffeeCountries_GEOJSON.geojson';
 
     // Read the JSON file
@@ -145,18 +95,29 @@ class _MyHomePageState extends State<MyHomePage> {
       // Parse the JSON data
       setState(() {
         _coffeeCountries ??= coffeeCountriesFromJson;
-        print('set state');
+        drawAllCoffeeCountries();
       });
     }).catchError((error) {
       print('Error reading JSON file: $error');
     });
   }
 
+  void drawAllCoffeeCountries() {
+    if (_coffeeCountries != null) {
+      for (var coffeeCountry in _coffeeCountries!.features) {
+        drawCoffeeCountriesPolygons(coffeeCountry);
+      }
+    }
+  }
+
   void drawCoffeeCountriesPolygons(CoffeeFeature feature) {
-    var polygonBuilder =
-        PolygonBuilder.fromSpatialReference(SpatialReference.wgs84);
-    var polygonBuilderFromParts =
-        PolygonBuilder.fromSpatialReference(SpatialReference.wgs84);
+    if (drawnCoffeeCountries.containsKey(feature.properties.admin)) {
+      return;
+    }
+    drawnCoffeeCountries[feature.properties.admin] = true;
+
+    var polygonBuilder = PolygonBuilder.fromSpatialReference(SpatialReference.wgs84);
+    var polygonBuilderFromParts = PolygonBuilder.fromSpatialReference(SpatialReference.wgs84);
 
     var coffeeFeatureCoordinates = feature.geometry.coordinates;
 
@@ -177,8 +138,7 @@ class _MyHomePageState extends State<MyHomePage> {
     } else {
       // if country is a multipart
       for (var part in coffeeFeatureCoordinates) {
-        var mutablePart =
-            MutablePart.withSpatialReference(SpatialReference.wgs84);
+        var mutablePart = MutablePart.withSpatialReference(SpatialReference.wgs84);
         for (var coordinates in part) {
           for (var coordinate in coordinates) {
             var lat = coordinate[0];
