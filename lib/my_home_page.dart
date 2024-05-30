@@ -20,105 +20,25 @@ class _MyHomePageState extends State<MyHomePage> {
   Map<String, bool> drawnCoffeeCountries = {}; // Map to track drawn coffee countries
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text("Home Page"),
-      ),
-      drawer: const CustomDrawer(),
-      body: Stack(
-        children: [
-          // Map widget in the background
-          MapPage(key: mapPageKey),
-          Positioned(
-            bottom: 16,
-            right: 16,
-            child: FloatingActionButton(
-              child: const Icon(Icons.list, color: Colors.white),
-              onPressed: () {
-                _panelController.open();
-              },
-            ),
-          ),
-          // SlidingUpPanel for the coffee countries list
-          SlidingUpPanel(
-            controller: _panelController,
-            minHeight: 0,
-            maxHeight: MediaQuery.of(context).size.height * 0.4,
-            panel: _coffeeCountries != null
-                ? GridView.builder(
-                    padding: const EdgeInsets.all(8.0),
-                    physics: NeverScrollableScrollPhysics(),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2, // Two columns
-                      childAspectRatio: 3, // Adjust the ratio to fit your design
-                      crossAxisSpacing: 8.0,
-                      mainAxisSpacing: 8.0,
-                    ),
-                    itemCount: _coffeeCountries!.features.length,
-                    itemBuilder: (context, index) {
-                      var coffeeCountry = _coffeeCountries!.features[index];
-                      return GestureDetector(
-                        onTap: () {
-                          mapPageKey.currentState?.zoomToCountry(coffeeCountry);
-                        },
-                        child: Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15.0),
-                          ),
-                          elevation: 5,
-                          child: Container(
-                            padding: const EdgeInsets.all(5.0),
-                            child: Center(
-                              child: Text(
-                                coffeeCountry.properties.admin,
-                                textAlign: TextAlign.center,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 2,
-                                style: TextStyle(
-                                  fontSize: 14.0,
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(context).primaryColorDark,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  )
-                : const Center(child: CircularProgressIndicator()), // if coffee countries don't load
-          ),
-        ],
-      ),
-    );
-  }
-
-  @override
   void initState() {
     super.initState();
     loadCoffeeCountries();
   }
 
-  void loadCoffeeCountries() {
-    CoffeeCountries coffeeCountriesFromJson;
+  void loadCoffeeCountries() async {
     String jsonFilePath = 'assets/FullCoffeeCountries_GEOJSON.geojson';
+    try {
+      String contents = await rootBundle.loadString(jsonFilePath);
+      CoffeeCountries coffeeCountriesFromJson = coffeeCountriesDataFromJson(contents);
 
-    // Read the JSON file
-    rootBundle.loadString(jsonFilePath).then((String contents) {
-      coffeeCountriesFromJson = coffeeCountriesDataFromJson(contents);
-
-      // Parse the JSON data
       setState(() {
         _coffeeCountries = coffeeCountriesFromJson;
-        _coffeeCountries!.features.sort((a, b) =>
-            a.properties.admin.compareTo(b.properties.admin)); // Sort alphabetically
+        _coffeeCountries!.features.sort((a, b) => a.properties.admin.compareTo(b.properties.admin)); // Sort alphabetically
         drawAllCoffeeCountries();
       });
-    }).catchError((error) {
+    } catch (error) {
       print('Error reading JSON file: $error');
-    });
+    }
   }
 
   void drawAllCoffeeCountries() {
@@ -180,5 +100,149 @@ class _MyHomePageState extends State<MyHomePage> {
   void drawAndNavigate(PolygonBuilder polygonBuilder, CoffeeFeature feature) {
     var polygon = polygonBuilder.toGeometry();
     mapPageKey.currentState?.addToGraphicsOverlay(polygon, feature);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: const Text("Home Page"),
+      ),
+      drawer: const CustomDrawer(),
+      body: Stack(
+        children: [
+          // Map widget in the background
+          MapPage(key: mapPageKey),
+          // Positioned(
+          //   bottom: 16,
+          //   right: 16,
+          //   child: FloatingActionButton(
+          //     child: const Icon(Icons.list, color: Colors.white),
+          //     onPressed: () {
+          //       _panelController.open();
+          //     },
+          //   ),
+          // ),
+          // SlidingUpPanel for the coffee countries list
+          SlidingUpPanel(
+            controller: _panelController,
+            minHeight: 90,
+            maxHeight: MediaQuery.of(context).size.height * 0.4,
+            panelBuilder: (sc) => _panel(sc),
+            // header: Container(
+            //   height: 30,
+            //   decoration: BoxDecoration(
+            //     color: Colors.grey[200],
+            //     borderRadius: const BorderRadius.only(
+            //       topLeft: Radius.circular(24.0),
+            //       topRight: Radius.circular(24.0),
+            //     ),
+            //   ),
+            //   child: Center(
+            //     child: Container(
+            //       width: 30,
+            //       height: 5,
+            //       decoration: BoxDecoration(
+            //         color: Colors.grey[400],
+            //         borderRadius: BorderRadius.circular(12.0),
+            //       ),
+            //     ),
+            //   ),
+            // ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _panel(ScrollController sc) {
+    return MediaQuery.removePadding(
+      context: context,
+      removeTop: true,
+      child: ListView(
+        controller: sc,
+        children: <Widget>[
+          const SizedBox(height: 12.0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Container(
+                width: 30,
+                height: 5,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 18.0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const <Widget>[
+              Text(
+                "Coffee producing countries",
+                style: TextStyle(
+                  fontWeight: FontWeight.normal,
+                  fontSize: 24.0,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 36.0),
+          _countryContainer(),
+          const SizedBox(height: 24),
+        ],
+      ),
+    );
+  }
+
+  Widget _countryContainer() {
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.3,
+      child: _coffeeCountries != null
+          ? GridView.builder(
+              padding: const EdgeInsets.all(8.0),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2, // Two columns
+                childAspectRatio: 3, // Adjust the ratio to fit your design
+                crossAxisSpacing: 8.0,
+                mainAxisSpacing: 8.0,
+              ),
+              itemCount: _coffeeCountries!.features.length,
+              itemBuilder: (context, index) {
+                var coffeeCountry = _coffeeCountries!.features[index];
+                return GestureDetector(
+                  onTap: () {
+                    mapPageKey.currentState?.zoomToCountry(coffeeCountry);
+                  },
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    elevation: 5,
+                    child: Container(
+                      padding: const EdgeInsets.all(5.0),
+                      child: Center(
+                        child: Text(
+                          coffeeCountry.properties.admin,
+                          textAlign: TextAlign.center,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                          style: TextStyle(
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).primaryColorDark,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            )
+          : const Center(child: CircularProgressIndicator()), // if coffee countries don't load
+    );
   }
 }

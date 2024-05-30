@@ -31,7 +31,7 @@ dependencies:
   flutter:
     sdk: flutter
   provider: ^6.0.0
-  sliding_up_panel: ^2.0.0
+  sliding_up_panel: ^2.0.0+1
 
 
 
