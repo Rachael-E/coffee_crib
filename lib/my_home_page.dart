@@ -127,7 +127,7 @@ class _MyHomePageState extends State<MyHomePage> {
           // SlidingUpPanel for the coffee countries list
           SlidingUpPanel(
             controller: _panelController,
-            minHeight: 90,
+            minHeight: MediaQuery.of(context).size.height * 0.1,
             maxHeight: MediaQuery.of(context).size.height * 0.4,
             panelBuilder: (sc) => _panel(sc),
             // header: Container(
@@ -177,7 +177,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ],
           ),
-          const SizedBox(height: 18.0),
+          const SizedBox(height: 10.0),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: const <Widget>[
@@ -185,12 +185,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 "Coffee producing countries",
                 style: TextStyle(
                   fontWeight: FontWeight.normal,
-                  fontSize: 24.0,
+                  fontSize: 20.0,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 36.0),
+          const SizedBox(height: 20.0),
           _countryContainer(),
           const SizedBox(height: 24),
         ],
