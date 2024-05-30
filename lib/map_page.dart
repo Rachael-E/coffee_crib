@@ -19,7 +19,7 @@ class MapPageState extends State<MapPage> {
   void initState() {
     super.initState();
 
-    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISChartedTerritory);
+    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
     map.initialViewpoint = Viewpoint.withLatLongScale(
         latitude: 4.671, longitude: -73.765, scale: 100000000);
     _mapViewController.arcGISMap = map;
