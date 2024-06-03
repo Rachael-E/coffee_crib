@@ -11,6 +11,20 @@ class MapPage extends StatefulWidget {
   State<MapPage> createState() => MapPageState();
 }
 
+class CountryColorManager {
+  final Set<Color> _usedColors = {};
+
+  Color getUniqueColor() {
+    Color color;
+    do {
+      color = Color((Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0);
+    } while (_usedColors.contains(color));
+
+    _usedColors.add(color);
+    return color;
+  }
+}
+
 class MapPageState extends State<MapPage> {
   final _mapViewController = ArcGISMapView.createController();
   var graphicsOverlay = GraphicsOverlay();
@@ -86,21 +100,23 @@ class MapPageState extends State<MapPage> {
   }
 
   void changeViewpoint(Geometry extent) {
-    var viewPoint = Viewpoint.fromTargetExtent(extent);
+    var viewPoint = Viewpoint.fromTargetExtent(extent, rotation: 0);
     _mapViewController.setViewpointAnimated(viewPoint, duration: 1);
   }
 
   void addToGraphicsOverlay(Geometry geometry, CoffeeFeature coffeeFeature) {
-    var generatedColor = Random().nextInt(Colors.primaries.length);
+    var colorManager = CountryColorManager();
+    var generatedColor = colorManager.getUniqueColor();
+
 
     final _borderSymbol = SimpleLineSymbol(
         style: SimpleLineSymbolStyle.solid,
-        color: Colors.primaries[generatedColor].withOpacity(1.0),
-        width: 5.0);
+        color: generatedColor.withOpacity(1.0),
+        width: 3.0);
 
     final _simpleFillSymbol = SimpleFillSymbol(
         style: SimpleFillSymbolStyle.solid,
-        color: Colors.primaries[generatedColor].withOpacity(0.5),
+        color: generatedColor.withOpacity(0.5),
         outline: _borderSymbol);
 
     final graphic = Graphic(geometry: geometry, symbol: _simpleFillSymbol);
@@ -117,4 +133,8 @@ class MapPageState extends State<MapPage> {
 
     graphicsOverlay.graphics.add(graphic);
   }
+
+  
 }
+
+

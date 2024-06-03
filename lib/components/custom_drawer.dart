@@ -13,27 +13,30 @@ class _CustomDrawerState extends State<CustomDrawer> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: ListView(padding: EdgeInsets.zero, children: <Widget>[
-        const DrawerHeader(
+      child: ListView(padding: EdgeInsets.zero, children: const <Widget>[
+         DrawerHeader(
           decoration: BoxDecoration(
-            color: Color.fromARGB(255, 190, 214, 174),
+            color: Color.fromARGB(255, 199, 230, 204),
           ),
-          child: Text(
+          child:  Text(
             'Coffee Crib',
             style: TextStyle(
-              color: Colors.white,
+              color: Colors.black,
               fontSize: 24,
             ),
           ),
         ),
         ListTile(
-          leading: const Icon(Icons.info),
-          title: const Text('Built with the ArcGIS Maps SDK for Flutter'),
-          onTap: () {
-            setState(() {
-              selectedPage = 'Messages';
-            });
-          },
+          leading: Icon(Icons.info),
+          title: Text('Built with the ArcGIS Maps SDK for Flutter (beta)'),
+        ),
+        ListTile(
+          leading: Icon(Icons.bar_chart),
+          title: Text('Data source: International Coffee Organization'),
+        ),
+        ListTile(
+          leading: Icon(Icons.warning),
+          title: Text('Country borders may be less accurate when zoomed in'),
         ),
       ]),
     );
