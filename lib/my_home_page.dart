@@ -1,6 +1,6 @@
 import 'package:coffee_crib/components/custom_drawer.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/services.dart' as services;
 import 'package:coffee_crib/models/coffee_countries.dart';
 import 'package:coffee_crib/map_page.dart';
 import 'package:arcgis_maps/arcgis_maps.dart';
@@ -25,7 +25,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color.fromARGB(255, 199, 230, 204),
-        title: const Text("Coffee Crib"),
+        title: const Text("Coffee Countries"),
       ),
       drawer: const CustomDrawer(),
       body: Stack(
@@ -142,13 +142,17 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     loadCoffeeCountries();
+    services.SystemChrome.setPreferredOrientations([
+    services.DeviceOrientation.portraitDown,
+    services.DeviceOrientation.portraitUp,
+  ]);
   }
 
   void loadCoffeeCountries() async {
     String jsonFilePath = 'assets/FullCoffeeCountries_GEOJSON.geojson';
 
     try {
-      String contents = await rootBundle.loadString(jsonFilePath);
+      String contents = await services.rootBundle.loadString(jsonFilePath);
       CoffeeCountries coffeeCountriesFromJson = coffeeCountriesDataFromJson(contents);
 
       // Parse the JSON data
