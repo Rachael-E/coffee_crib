@@ -37,7 +37,16 @@ class _MyHomePageState extends State<MyHomePage> {
             controller: _panelController,
             minHeight: MediaQuery.of(context).size.height * 0.08,
             maxHeight: MediaQuery.of(context).size.height * 0.4,
-            panel: _panelContent(),
+            panel: Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/coffee_background.png'),
+                  fit: BoxFit.cover,
+                ),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              child: _panelContent(),
+            ),
             isDraggable: true,
           ),
         ],
