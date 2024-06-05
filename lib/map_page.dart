@@ -17,7 +17,8 @@ class CountryColorManager {
   Color getUniqueColor() {
     Color color;
     do {
-      color = Color((Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0);
+      color =
+          Color((Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0);
     } while (_usedColors.contains(color));
 
     _usedColors.add(color);
@@ -49,15 +50,19 @@ class MapPageState extends State<MapPage> {
   }
 
   void zoomToCountry(CoffeeFeature feature) {
-
     for (var graphic in graphicsOverlay.graphics) {
-          if (feature.properties.admin == graphic.attributes['name']) {
-            changeViewpoint(graphic.geometry!.extent);
-      
+      if (feature.properties.admin == graphic.attributes['name']) {
+        changeViewpoint(expandedEnvelope(graphic));
+      }
     }
+  }
 
-    }
+  Envelope expandedEnvelope(Graphic graphic) {
+    var envelopeBuilder =
+        EnvelopeBuilder.fromEnvelope(graphic.geometry!.extent);
+    envelopeBuilder.expandBy(1.2);
 
+    return envelopeBuilder.toGeometry().extent;
   }
 
   void selectGraphic(Offset localPosition) async {
@@ -72,31 +77,24 @@ class MapPageState extends State<MapPage> {
 
     if (context.mounted) {
       final graphic = identifyGraphicsOverlayResult.graphics.first;
-      double countryBagsProducedDouble = double.parse(graphic.attributes['coffeeCountryBags']);
+      changeViewpoint(expandedEnvelope(graphic));
+
+      double countryBagsProducedDouble =
+          double.parse(graphic.attributes['coffeeCountryBags']);
       var formatter = NumberFormat('#,###,000');
       final countryBagsProduced = formatter.format(countryBagsProducedDouble);
       final countryName = graphic.attributes['name'];
 
       showDialog(
         context: context,
-        builder: (context) {
-          return AlertDialog(
-              title: Text(countryName), content: Text('$countryName produces $countryBagsProduced bags of coffee annually.'));
-        },
+builder: (BuildContext context) {
+      return CustomAlertDialog(
+        countryName: countryName,
+        countryBagsProduced: countryBagsProduced,
+      );
+    },
       );
     }
-  }
-
-  void showWorldView() {
-    _mapViewController.setViewpointAnimated(
-      Viewpoint.fromCenter(
-        ArcGISPoint(
-          x: 0, 
-          y: 0
-        ), 
-        scale: 100000000
-        ), 
-      duration: 1);
   }
 
   void changeViewpoint(Geometry extent) {
@@ -104,22 +102,25 @@ class MapPageState extends State<MapPage> {
     _mapViewController.setViewpointAnimated(viewPoint, duration: 1);
   }
 
+  void showWorldView() {
+    _mapViewController.setViewpointAnimated(
+        Viewpoint.fromCenter(ArcGISPoint(x: 0, y: 0), scale: 100000000),
+        duration: 1);
+  }
+
   void addToGraphicsOverlay(Geometry geometry, CoffeeFeature coffeeFeature) {
     var colorManager = CountryColorManager();
     var generatedColor = colorManager.getUniqueColor();
 
+    final borderSymbol = SimpleLineSymbol(
+        style: SimpleLineSymbolStyle.solid, color: Colors.black, width: 1.0);
 
-    final _borderSymbol = SimpleLineSymbol(
-        style: SimpleLineSymbolStyle.solid,
-        color: generatedColor.withOpacity(1.0),
-        width: 3.0);
-
-    final _simpleFillSymbol = SimpleFillSymbol(
+    final simpleFillSymbol = SimpleFillSymbol(
         style: SimpleFillSymbolStyle.solid,
         color: generatedColor.withOpacity(0.5),
-        outline: _borderSymbol);
+        outline: borderSymbol);
 
-    final graphic = Graphic(geometry: geometry, symbol: _simpleFillSymbol);
+    final graphic = Graphic(geometry: geometry, symbol: simpleFillSymbol);
 
     final coffeeCountryBags = <String, dynamic>{
       'coffeeCountryBags': coffeeFeature.properties.coffeeProduction
@@ -137,4 +138,56 @@ class MapPageState extends State<MapPage> {
   
 }
 
+class CustomAlertDialog extends StatelessWidget {
+  final String countryName;
+  final String countryBagsProduced;
 
+  CustomAlertDialog({required this.countryName, required this.countryBagsProduced});
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20), bottom: Radius.circular(20)),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/coffee_gradient.png'),
+            fit: BoxFit.cover,
+          ),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                countryName,
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 16),
+              Text(
+                '$countryName produces $countryBagsProduced bags of coffee annually.',
+                style: TextStyle(
+                  fontSize: 18,
+                ),
+              ),
+              SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('Close'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

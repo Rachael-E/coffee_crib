@@ -70,6 +70,7 @@ flutter:
     - assets/common_coffee_countries.geojson
     - assets/FullCoffeeCountries_GEOJSON.geojson
     - assets/coffee_background.png
+    - assets/coffee_gradient.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:

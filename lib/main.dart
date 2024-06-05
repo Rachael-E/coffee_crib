@@ -19,6 +19,8 @@ class MyApp extends StatelessWidget {
 
       return MaterialApp(
         title: 'Coffee Crib',
+        // builder: (context, child) => SafeArea(child),
+
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.brown),
           useMaterial3: true,

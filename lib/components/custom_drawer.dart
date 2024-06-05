@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CustomDrawer extends StatefulWidget {
-  const CustomDrawer({Key? key}) : super(key: key);
+  const CustomDrawer({super.key});
 
   @override
   State<CustomDrawer> createState() => _CustomDrawerState();
@@ -19,7 +19,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
             color: Color.fromARGB(255, 199, 230, 204),
           ),
           child:  Text(
-            'Coffee Crib',
+            'About Coffee Crib',
             style: TextStyle(
               color: Colors.black,
               fontSize: 24,

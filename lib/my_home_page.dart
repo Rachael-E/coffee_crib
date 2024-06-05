@@ -7,7 +7,7 @@ import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key}) : super(key: key);
+  const MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -18,27 +18,76 @@ class _MyHomePageState extends State<MyHomePage> {
   final GlobalKey<MapPageState> mapPageKey = GlobalKey<MapPageState>();
   final PanelController _panelController = PanelController();
   final ScrollController _scrollController = ScrollController();
-  Map<String, bool> drawnCoffeeCountries = {}; // Map to track drawn coffee countries
+  Map<String, bool> drawnCoffeeCountries =
+      {}; // Map to track drawn coffee countries
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 199, 230, 204),
-        title: const Text("Coffee Countries"),
+              iconTheme: IconThemeData(color: const Color.fromARGB(255, 255, 255, 255)),
+
+        title: const Row(
+          children: [
+            SizedBox(width: 10),
+            Text(
+              "Coffee Countries",
+                                  style: TextStyle(
+                      // fontWeight: FontWeight.bold,
+                      // fontSize: 16.0,
+                      color: Colors.white,
+                    ),
+            ),
+          ],
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        flexibleSpace: Container(
+          color: Color.fromARGB(255, 112, 137, 112),
+          // decoration: BoxDecoration(
+          //   gradient: LinearGradient(
+          //     colors: [
+          //       Color.fromARGB(255, 207, 176, 190),
+          //       Color.fromARGB(255, 175, 175, 175)
+          //     ],
+          //     begin: Alignment.topCenter,
+          //     end: Alignment.bottomCenter,
+          //   ),
+          // ),
+        ),
+        // flexibleSpace: Container(
+        //   decoration: const BoxDecoration(
+        //     image: DecorationImage(
+        //       image: AssetImage('assets/coffee_gradient.png'),
+        //       fit: BoxFit.cover,
+        //     ),
+        //     borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        //   ),
+        // ),
       ),
       drawer: const CustomDrawer(),
       body: Stack(
         children: [
           // Map widget in the background
           MapPage(key: mapPageKey),
+          Positioned(
+            bottom: MediaQuery.of(context).size.height * 0.1,
+            right: 16,
+            child: FloatingActionButton(
+              backgroundColor: const Color.fromARGB(255, 233, 223, 221),
+              child: const Icon(Icons.zoom_out_map, color: Colors.black),
+              onPressed: () {
+                mapPageKey.currentState?.showWorldView();
+              },
+            ),
+          ),
           // SlidingUpPanel for the coffee countries list
           SlidingUpPanel(
             controller: _panelController,
             minHeight: MediaQuery.of(context).size.height * 0.08,
             maxHeight: MediaQuery.of(context).size.height * 0.4,
             panel: Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage('assets/coffee_background.png'),
                   fit: BoxFit.cover,
@@ -59,7 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
       children: <Widget>[
         // Draggable header
         Container(
-          padding: EdgeInsets.symmetric(vertical: 12.0),
+          padding: const EdgeInsets.symmetric(vertical: 12.0),
           child: Column(
             children: [
               Row(
@@ -69,7 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     width: 30,
                     height: 5,
                     decoration: const BoxDecoration(
-                        color: Colors.grey,
+                        color: Color.fromARGB(108, 121, 85, 72),
                         borderRadius: BorderRadius.all(Radius.circular(12.0))),
                   ),
                 ],
@@ -81,10 +130,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    "Coffee producing countries",
+                    "Where in the world is coffee produced?",
                     style: TextStyle(
-                      fontWeight: FontWeight.normal,
-                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16.0,
                     ),
                   ),
                 ],
@@ -119,7 +168,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   mapPageKey.currentState?.zoomToCountry(coffeeCountry);
                 },
                 child: Card(
-                  color: Color.fromARGB(255, 221, 197, 205),
+                  color: const Color.fromARGB(255, 233, 223, 221),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15.0),
                   ),
@@ -134,7 +183,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         maxLines: 2,
                         style: const TextStyle(
                           fontSize: 14.0,
-                          fontWeight: FontWeight.normal,
+                          fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
                       ),
@@ -144,7 +193,9 @@ class _MyHomePageState extends State<MyHomePage> {
               );
             },
           )
-        : const Center(child: CircularProgressIndicator()); // if coffee countries don't load
+        : const Center(
+            child:
+                CircularProgressIndicator()); // if coffee countries don't load
   }
 
   @override
@@ -152,9 +203,9 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     loadCoffeeCountries();
     services.SystemChrome.setPreferredOrientations([
-    services.DeviceOrientation.portraitDown,
-    services.DeviceOrientation.portraitUp,
-  ]);
+      services.DeviceOrientation.portraitDown,
+      services.DeviceOrientation.portraitUp,
+    ]);
   }
 
   void loadCoffeeCountries() async {
@@ -162,17 +213,18 @@ class _MyHomePageState extends State<MyHomePage> {
 
     try {
       String contents = await services.rootBundle.loadString(jsonFilePath);
-      CoffeeCountries coffeeCountriesFromJson = coffeeCountriesDataFromJson(contents);
+      CoffeeCountries coffeeCountriesFromJson =
+          coffeeCountriesDataFromJson(contents);
 
       // Parse the JSON data
       setState(() {
         _coffeeCountries = coffeeCountriesFromJson;
-        _coffeeCountries!.features.sort((a, b) =>
-            a.properties.admin.compareTo(b.properties.admin)); // Sort alphabetically
+        _coffeeCountries!.features.sort((a, b) => a.properties.admin
+            .compareTo(b.properties.admin)); // Sort alphabetically
         drawAllCoffeeCountries();
       });
     } catch (error) {
-      print('Error reading JSON file: $error');
+      debugPrint('Error reading JSON file: $error');
     }
   }
 
@@ -190,8 +242,10 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     drawnCoffeeCountries[feature.properties.admin] = true;
 
-    var polygonBuilder = PolygonBuilder.fromSpatialReference(SpatialReference.wgs84);
-    var polygonBuilderFromParts = PolygonBuilder.fromSpatialReference(SpatialReference.wgs84);
+    var polygonBuilder =
+        PolygonBuilder.fromSpatialReference(SpatialReference.wgs84);
+    var polygonBuilderFromParts =
+        PolygonBuilder.fromSpatialReference(SpatialReference.wgs84);
 
     var coffeeFeatureCoordinates = feature.geometry.coordinates;
 
@@ -212,7 +266,8 @@ class _MyHomePageState extends State<MyHomePage> {
     } else {
       // if country is a multipart
       for (var part in coffeeFeatureCoordinates) {
-        var mutablePart = MutablePart.withSpatialReference(SpatialReference.wgs84);
+        var mutablePart =
+            MutablePart.withSpatialReference(SpatialReference.wgs84);
         for (var coordinates in part) {
           for (var coordinate in coordinates) {
             var lat = coordinate[0];

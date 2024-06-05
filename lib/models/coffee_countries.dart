@@ -117,13 +117,13 @@ class CoffeeCountryGeometry {
 }
 
 enum GeometryType {
-    MULTI_POLYGON,
-    POLYGON
+    multiPolygon,
+    polygon
 }
 
 final geometryTypeValues = EnumValues({
-    "MultiPolygon": GeometryType.MULTI_POLYGON,
-    "Polygon": GeometryType.POLYGON
+    "MultiPolygon": GeometryType.multiPolygon,
+    "Polygon": GeometryType.polygon
 });
 
 class FeatureProperties {
@@ -159,11 +159,11 @@ class FeatureProperties {
 }
 
 enum FeatureType {
-    FEATURE
+    feature
 }
 
 final featureTypeValues = EnumValues({
-    "Feature": FeatureType.FEATURE
+    "Feature": FeatureType.feature
 });
 
 class EnumValues<T> {
