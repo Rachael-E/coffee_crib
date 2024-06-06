@@ -18,57 +18,34 @@ class _MyHomePageState extends State<MyHomePage> {
   final GlobalKey<MapPageState> mapPageKey = GlobalKey<MapPageState>();
   final PanelController _panelController = PanelController();
   final ScrollController _scrollController = ScrollController();
-  Map<String, bool> drawnCoffeeCountries =
-      {}; // Map to track drawn coffee countries
+  Map<String, bool> drawnCoffeeCountries = {}; // Map to track drawn coffee countries
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-              iconTheme: IconThemeData(color: const Color.fromARGB(255, 255, 255, 255)),
-
+        iconTheme:
+            const IconThemeData(color: Colors.white),
         title: const Row(
           children: [
             SizedBox(width: 10),
             Text(
               "Coffee Countries",
-                                  style: TextStyle(
-                      // fontWeight: FontWeight.bold,
-                      // fontSize: 16.0,
-                      color: Colors.white,
-                    ),
+              style: TextStyle(
+                color: Colors.white,
+              ),
             ),
           ],
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         flexibleSpace: Container(
-          color: Color.fromARGB(255, 112, 137, 112),
-          // decoration: BoxDecoration(
-          //   gradient: LinearGradient(
-          //     colors: [
-          //       Color.fromARGB(255, 207, 176, 190),
-          //       Color.fromARGB(255, 175, 175, 175)
-          //     ],
-          //     begin: Alignment.topCenter,
-          //     end: Alignment.bottomCenter,
-          //   ),
-          // ),
+          color: const Color.fromARGB(255, 112, 137, 112),
         ),
-        // flexibleSpace: Container(
-        //   decoration: const BoxDecoration(
-        //     image: DecorationImage(
-        //       image: AssetImage('assets/coffee_gradient.png'),
-        //       fit: BoxFit.cover,
-        //     ),
-        //     borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        //   ),
-        // ),
       ),
       drawer: const CustomDrawer(),
       body: Stack(
         children: [
-          // Map widget in the background
           MapPage(key: mapPageKey),
           Positioned(
             bottom: MediaQuery.of(context).size.height * 0.1,
@@ -81,7 +58,6 @@ class _MyHomePageState extends State<MyHomePage> {
               },
             ),
           ),
-          // SlidingUpPanel for the coffee countries list
           SlidingUpPanel(
             controller: _panelController,
             minHeight: MediaQuery.of(context).size.height * 0.08,
@@ -89,7 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
             panel: Container(
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/coffee_background.png'),
+                  image: AssetImage('assets/coffee_background.png'), // AI-generated image
                   fit: BoxFit.cover,
                 ),
                 borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -106,7 +82,6 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget _panelContent() {
     return Column(
       children: <Widget>[
-        // Draggable header
         Container(
           padding: const EdgeInsets.symmetric(vertical: 12.0),
           child: Column(
@@ -119,7 +94,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     height: 5,
                     decoration: const BoxDecoration(
                         color: Color.fromARGB(108, 121, 85, 72),
-                        borderRadius: BorderRadius.all(Radius.circular(12.0))),
+                        borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                      ),
                   ),
                 ],
               ),
@@ -141,7 +117,6 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
         ),
-        // Expanded ListView
         Expanded(
           child: _countryContainer(),
         ),
@@ -155,8 +130,8 @@ class _MyHomePageState extends State<MyHomePage> {
             padding: const EdgeInsets.all(8.0),
             controller: _scrollController,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2, // Two columns
-              childAspectRatio: 3, // Adjust the ratio to fit your design
+              crossAxisCount: 2,
+              childAspectRatio: 3,
               crossAxisSpacing: 8.0,
               mainAxisSpacing: 8.0,
             ),
@@ -195,7 +170,8 @@ class _MyHomePageState extends State<MyHomePage> {
           )
         : const Center(
             child:
-                CircularProgressIndicator()); // if coffee countries don't load
+                CircularProgressIndicator()
+        );
   }
 
   @override
@@ -264,7 +240,7 @@ class _MyHomePageState extends State<MyHomePage> {
       }
       drawAndNavigate(polygonBuilder, feature);
     } else {
-      // if country is a multipart
+      // if country is a multipart polygon 
       for (var part in coffeeFeatureCoordinates) {
         var mutablePart =
             MutablePart.withSpatialReference(SpatialReference.wgs84);

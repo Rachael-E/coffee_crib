@@ -13,13 +13,11 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
 
       return MaterialApp(
         title: 'Coffee Crib',
-        // builder: (context, child) => SafeArea(child),
 
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.brown),

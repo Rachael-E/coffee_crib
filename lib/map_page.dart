@@ -87,12 +87,12 @@ class MapPageState extends State<MapPage> {
 
       showDialog(
         context: context,
-builder: (BuildContext context) {
-      return CustomAlertDialog(
-        countryName: countryName,
-        countryBagsProduced: countryBagsProduced,
-      );
-    },
+        builder: (BuildContext context) {
+          return CustomAlertDialog(
+            countryName: countryName,
+            countryBagsProduced: countryBagsProduced,
+          );
+        },
       );
     }
   }
@@ -134,26 +134,26 @@ builder: (BuildContext context) {
 
     graphicsOverlay.graphics.add(graphic);
   }
-
-  
 }
 
 class CustomAlertDialog extends StatelessWidget {
   final String countryName;
   final String countryBagsProduced;
 
-  CustomAlertDialog({required this.countryName, required this.countryBagsProduced});
+  const CustomAlertDialog(
+      {super.key, required this.countryName, required this.countryBagsProduced});
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20), bottom: Radius.circular(20)),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+            top: Radius.circular(20), bottom: Radius.circular(20)),
       ),
       child: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/coffee_gradient.png'),
+            image: AssetImage('assets/coffee_gradient.png'), // AI-generated image
             fit: BoxFit.cover,
           ),
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -165,24 +165,24 @@ class CustomAlertDialog extends StatelessWidget {
             children: [
               Text(
                 countryName,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               Text(
                 '$countryName produces $countryBagsProduced bags of coffee annually.',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 18,
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('Close'),
+                child: const Text('Close'),
               ),
             ],
           ),

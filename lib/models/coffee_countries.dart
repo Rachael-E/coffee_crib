@@ -1,6 +1,6 @@
-// To parse this JSON data, do
+// JSON serializer code generated from https://app.quicktype.io/
 //
-//     final coffeeCountries = coffeeCountriesFromJson(jsonString);
+//    
 
 import 'dart:convert';
 
