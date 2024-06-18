@@ -1,7 +1,9 @@
+import 'dart:math';
+
+import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:coffee_crib/components/custom_alert_dialog.dart';
 import 'package:coffee_crib/models/coffee_countries.dart';
 import 'package:flutter/material.dart';
-import 'package:arcgis_maps/arcgis_maps.dart';
-import 'dart:math';
 import 'package:intl/intl.dart';
 
 class MapPage extends StatefulWidget {
@@ -11,32 +13,21 @@ class MapPage extends StatefulWidget {
   State<MapPage> createState() => MapPageState();
 }
 
-class CountryColorManager {
-  final Set<Color> _usedColors = {};
-
-  Color getUniqueColor() {
-    Color color;
-    do {
-      color =
-          Color((Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0);
-    } while (_usedColors.contains(color));
-
-    _usedColors.add(color);
-    return color;
-  }
-}
-
 class MapPageState extends State<MapPage> {
   final _mapViewController = ArcGISMapView.createController();
-  var graphicsOverlay = GraphicsOverlay();
+  final graphicsOverlay = GraphicsOverlay();
 
   @override
   void initState() {
     super.initState();
 
-    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
-    map.initialViewpoint = Viewpoint.withLatLongScale(
-        latitude: 4.671, longitude: -73.765, scale: 100000000);
+    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic)
+    ..initialViewpoint = Viewpoint.withLatLongScale(
+        latitude: 4.671,  
+        longitude: -73.765, 
+        scale: 100000000
+        );
+
     _mapViewController.arcGISMap = map;
     _mapViewController.graphicsOverlays.add(graphicsOverlay);
   }
@@ -58,9 +49,8 @@ class MapPageState extends State<MapPage> {
   }
 
   Envelope expandedEnvelope(Graphic graphic) {
-    var envelopeBuilder =
-        EnvelopeBuilder.fromEnvelope(graphic.geometry!.extent);
-    envelopeBuilder.expandBy(1.2);
+    final envelopeBuilder = EnvelopeBuilder.fromEnvelope(graphic.geometry!.extent)
+      ..expandBy(1.2);
 
     return envelopeBuilder.toGeometry().extent;
   }
@@ -136,58 +126,17 @@ class MapPageState extends State<MapPage> {
   }
 }
 
-class CustomAlertDialog extends StatelessWidget {
-  final String countryName;
-  final String countryBagsProduced;
+class CountryColorManager {
+  final Set<Color> _usedColors = {};
 
-  const CustomAlertDialog(
-      {super.key, required this.countryName, required this.countryBagsProduced});
+  Color getUniqueColor() {
+    Color color;
+    do {
+      color =
+          Color((Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0);
+    } while (_usedColors.contains(color));
 
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-            top: Radius.circular(20), bottom: Radius.circular(20)),
-      ),
-      child: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/coffee_gradient.png'), // AI-generated image
-            fit: BoxFit.cover,
-          ),
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                countryName,
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                '$countryName produces $countryBagsProduced bags of coffee annually.',
-                style: const TextStyle(
-                  fontSize: 18,
-                ),
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Close'),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+    _usedColors.add(color);
+    return color;
   }
 }
