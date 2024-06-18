@@ -14,80 +14,78 @@ class MapPage extends StatefulWidget {
 }
 
 class MapPageState extends State<MapPage> {
-  final _mapViewController = ArcGISMapView.createController();
-  final graphicsOverlay = GraphicsOverlay();
+  late final _mapViewController = ArcGISMapView.createController();
+  final _graphicsOverlay = GraphicsOverlay();
 
   @override
   void initState() {
     super.initState();
 
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic)
-    ..initialViewpoint = Viewpoint.withLatLongScale(
-        latitude: 4.671,  
-        longitude: -73.765, 
-        scale: 100000000
-        );
+      ..initialViewpoint = Viewpoint.withLatLongScale(
+          latitude: 4.671, longitude: -73.765, scale: 100000000);
 
     _mapViewController.arcGISMap = map;
-    _mapViewController.graphicsOverlays.add(graphicsOverlay);
+    _mapViewController.graphicsOverlays.add(_graphicsOverlay);
   }
 
   @override
   Widget build(BuildContext context) {
     return ArcGISMapView(
       controllerProvider: () => _mapViewController,
-      onTap: selectGraphic,
+      onTap: _selectGraphic,
     );
   }
 
   void zoomToCountry(CoffeeFeature feature) {
-    for (var graphic in graphicsOverlay.graphics) {
+    for (var graphic in _graphicsOverlay.graphics) {
       if (feature.properties.admin == graphic.attributes['name']) {
-        changeViewpoint(expandedEnvelope(graphic));
+        _changeViewpoint(_expandedEnvelope(graphic));
       }
     }
   }
 
-  Envelope expandedEnvelope(Graphic graphic) {
-    final envelopeBuilder = EnvelopeBuilder.fromEnvelope(graphic.geometry!.extent)
-      ..expandBy(1.2);
+  Envelope _expandedEnvelope(Graphic graphic) {
+    final envelopeBuilder =
+        EnvelopeBuilder.fromEnvelope(graphic.geometry!.extent)..expandBy(1.2);
 
     return envelopeBuilder.toGeometry().extent;
   }
 
-  void selectGraphic(Offset localPosition) async {
-    final identifyGraphicsOverlayResult =
-        await _mapViewController.identifyGraphicsOverlay(
-      graphicsOverlay,
+  void _selectGraphic(Offset localPosition) async {
+    final result = await _mapViewController.identifyGraphicsOverlay(
+      _graphicsOverlay,
       screenPoint: localPosition,
       tolerance: 22,
     );
 
-    if (identifyGraphicsOverlayResult.graphics.isEmpty) return;
+    if (result.graphics.isEmpty || !mounted) return;
 
-    if (context.mounted) {
-      final graphic = identifyGraphicsOverlayResult.graphics.first;
-      changeViewpoint(expandedEnvelope(graphic));
+    final graphic = result.graphics.first;
+    _changeViewpoint(_expandedEnvelope(graphic));
 
-      double countryBagsProducedDouble =
-          double.parse(graphic.attributes['coffeeCountryBags']);
-      var formatter = NumberFormat('#,###,000');
-      final countryBagsProduced = formatter.format(countryBagsProducedDouble);
-      final countryName = graphic.attributes['name'];
+    final countryBagsProducedDouble =
+        double.parse(graphic.attributes['coffeeCountryBags']);
+    final formatter = NumberFormat('#,###,000');
+    final countryBagsProduced = formatter.format(countryBagsProducedDouble);
+    final countryName = graphic.attributes['name'];
 
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return CustomAlertDialog(
-            countryName: countryName,
-            countryBagsProduced: countryBagsProduced,
-          );
-        },
-      );
-    }
+    _showCustomDialog(countryName, countryBagsProduced);
   }
 
-  void changeViewpoint(Geometry extent) {
+  void _showCustomDialog(String countryName, String countryBagsProduced) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          countryName: countryName,
+          countryBagsProduced: countryBagsProduced,
+        );
+      },
+    );
+  }
+
+  void _changeViewpoint(Geometry extent) {
     var viewPoint = Viewpoint.fromTargetExtent(extent, rotation: 0);
     _mapViewController.setViewpointAnimated(viewPoint, duration: 1);
   }
@@ -103,37 +101,36 @@ class MapPageState extends State<MapPage> {
     var generatedColor = colorManager.getUniqueColor();
 
     final borderSymbol = SimpleLineSymbol(
-        style: SimpleLineSymbolStyle.solid, color: Colors.black, width: 1.0);
+      style: SimpleLineSymbolStyle.solid,
+      color: Colors.black,
+      width: 1.0,
+    );
 
     final simpleFillSymbol = SimpleFillSymbol(
-        style: SimpleFillSymbolStyle.solid,
-        color: generatedColor.withOpacity(0.5),
-        outline: borderSymbol);
+      style: SimpleFillSymbolStyle.solid,
+      color: generatedColor.withOpacity(0.5),
+      outline: borderSymbol,
+    );
 
     final graphic = Graphic(geometry: geometry, symbol: simpleFillSymbol);
 
-    final coffeeCountryBags = <String, dynamic>{
-      'coffeeCountryBags': coffeeFeature.properties.coffeeProduction
-    };
-    final coffeeCountryName = <String, dynamic>{
-      'name': coffeeFeature.properties.admin
-    };
+    graphic.attributes.addAll({
+      'coffeeCountryBags': coffeeFeature.properties.coffeeProduction,
+      'name': coffeeFeature.properties.admin,
+    });
 
-    graphic.attributes.addEntries(coffeeCountryBags.entries);
-    graphic.attributes.addEntries(coffeeCountryName.entries);
-
-    graphicsOverlay.graphics.add(graphic);
+    _graphicsOverlay.graphics.add(graphic);
   }
 }
 
 class CountryColorManager {
   final Set<Color> _usedColors = {};
+  final Random _random = Random();
 
   Color getUniqueColor() {
     Color color;
     do {
-      color =
-          Color((Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0);
+      color = Color((_random.nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0);
     } while (_usedColors.contains(color));
 
     _usedColors.add(color);

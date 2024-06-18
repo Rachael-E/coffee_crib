@@ -1,9 +1,9 @@
+import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:coffee_crib/components/custom_drawer.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' as services;
 import 'package:coffee_crib/models/coffee_countries.dart';
 import 'package:coffee_crib/map_page.dart';
-import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' as services;
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -15,71 +15,97 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   CoffeeCountries? _coffeeCountries;
-  final GlobalKey<MapPageState> mapPageKey = GlobalKey<MapPageState>();
+  late final GlobalKey<MapPageState> _mapPageKey = GlobalKey<MapPageState>();
   final PanelController _panelController = PanelController();
   final ScrollController _scrollController = ScrollController();
-  Map<String, bool> drawnCoffeeCountries = {}; // Map to track drawn coffee countries
+  Map<String, bool> drawnCoffeeCountries = {};
+
+  static const _appBarColor = Color.fromARGB(255, 112, 137, 112);
+  static const _fabCardColor = Color.fromARGB(255, 233, 223, 221);
+  static const _panelHandleColor = Color.fromARGB(108, 121, 85, 72);
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCoffeeCountries();
+    services.SystemChrome.setPreferredOrientations([
+      services.DeviceOrientation.portraitDown,
+      services.DeviceOrientation.portraitUp,
+    ]);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        iconTheme:
-            const IconThemeData(color: Colors.white),
-        title: const Row(
-          children: [
-            SizedBox(width: 10),
-            Text(
-              "Coffee Countries",
-              style: TextStyle(
-                color: Colors.white,
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        flexibleSpace: Container(
-          color: const Color.fromARGB(255, 112, 137, 112),
-        ),
-      ),
+      appBar: _buildAppBar(),
       drawer: const CustomDrawer(),
       body: Stack(
         children: [
-          MapPage(key: mapPageKey),
-          Positioned(
-            bottom: MediaQuery.of(context).size.height * 0.1,
-            right: 16,
-            child: FloatingActionButton(
-              backgroundColor: const Color.fromARGB(255, 233, 223, 221),
-              child: const Icon(Icons.zoom_out_map, color: Colors.black),
-              onPressed: () {
-                mapPageKey.currentState?.showWorldView();
-              },
-            ),
-          ),
-          SlidingUpPanel(
-            controller: _panelController,
-            minHeight: MediaQuery.of(context).size.height * 0.08,
-            maxHeight: MediaQuery.of(context).size.height * 0.4,
-            panel: Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/coffee_background.png'), // AI-generated image
-                  fit: BoxFit.cover,
-                ),
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-              ),
-              child: _panelContent(),
-            ),
-            isDraggable: true,
-          ),
+          MapPage(key: _mapPageKey),
+          _buildFloatingActionButton(context),
+          _buildSlidingUpPanel(),
         ],
       ),
     );
   }
 
-  Widget _panelContent() {
+  AppBar _buildAppBar() {
+    return AppBar(
+      iconTheme: const IconThemeData(color: Colors.white),
+      title: const Row(
+        children: [
+          SizedBox(width: 10),
+          Text(
+            "Coffee Countries",
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      flexibleSpace: Container(
+        color: _appBarColor,
+      ),
+    );
+  }
+
+  Positioned _buildFloatingActionButton(BuildContext context) {
+    return Positioned(
+      bottom: MediaQuery.of(context).size.height * 0.1,
+      right: 16,
+      child: FloatingActionButton(
+        backgroundColor: _fabCardColor,
+        child: const Icon(Icons.zoom_out_map, color: Colors.black),
+        onPressed: () {
+          _mapPageKey.currentState?.showWorldView();
+        },
+      ),
+    );
+  }
+
+  SlidingUpPanel _buildSlidingUpPanel() {
+    return SlidingUpPanel(
+      controller: _panelController,
+      minHeight: MediaQuery.of(context).size.height * 0.08,
+      maxHeight: MediaQuery.of(context).size.height * 0.4,
+      panel: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(
+                'assets/coffee_background.png'), // AI-generated image
+            fit: BoxFit.cover,
+          ),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: _buildPanelContent(),
+      ),
+      isDraggable: true,
+    );
+  }
+
+  Widget _buildPanelContent() {
     return Column(
       children: <Widget>[
         Container(
@@ -93,143 +119,125 @@ class _MyHomePageState extends State<MyHomePage> {
                     width: 30,
                     height: 5,
                     decoration: const BoxDecoration(
-                        color: Color.fromARGB(108, 121, 85, 72),
-                        borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                      ),
+                      color: _panelHandleColor,
+                      borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                    ),
                   ),
                 ],
               ),
               const SizedBox(
                 height: 10.0,
               ),
-              const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    "Where in the world is coffee produced?",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16.0,
-                    ),
-                  ),
-                ],
+              const Text(
+                "Where in the world is coffee produced?",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16.0,
+                ),
               ),
             ],
           ),
         ),
         Expanded(
-          child: _countryContainer(),
+          child: _buildCountryContainer(),
         ),
       ],
     );
   }
 
-  Widget _countryContainer() {
-    return _coffeeCountries != null
-        ? GridView.builder(
-            padding: const EdgeInsets.all(8.0),
-            controller: _scrollController,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 3,
-              crossAxisSpacing: 8.0,
-              mainAxisSpacing: 8.0,
+  Widget _buildCountryContainer() {
+    if (_coffeeCountries == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    return GridView.builder(
+      padding: const EdgeInsets.all(8.0),
+      controller: _scrollController,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 3,
+        crossAxisSpacing: 8.0,
+        mainAxisSpacing: 8.0,
+      ),
+      itemCount: _coffeeCountries!.features.length,
+      itemBuilder: (context, index) {
+        var coffeeCountry = _coffeeCountries!.features[index];
+        return GestureDetector(
+          onTap: () {
+            _mapPageKey.currentState?.zoomToCountry(coffeeCountry);
+          },
+          child: Card(
+            color: _fabCardColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15.0),
             ),
-            itemCount: _coffeeCountries!.features.length,
-            itemBuilder: (context, index) {
-              var coffeeCountry = _coffeeCountries!.features[index];
-              return GestureDetector(
-                onTap: () {
-                  mapPageKey.currentState?.zoomToCountry(coffeeCountry);
-                },
-                child: Card(
-                  color: const Color.fromARGB(255, 233, 223, 221),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15.0),
-                  ),
-                  elevation: 5,
-                  child: Container(
-                    padding: const EdgeInsets.all(5.0),
-                    child: Center(
-                      child: Text(
-                        coffeeCountry.properties.admin,
-                        textAlign: TextAlign.center,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 2,
-                        style: const TextStyle(
-                          fontSize: 14.0,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
+            elevation: 5,
+            child: Container(
+              padding: const EdgeInsets.all(5.0),
+              child: Center(
+                child: Text(
+                  coffeeCountry.properties.admin,
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                  style: const TextStyle(
+                    fontSize: 14.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
                   ),
                 ),
-              );
-            },
-          )
-        : const Center(
-            child:
-                CircularProgressIndicator()
+              ),
+            ),
+          ),
         );
+      },
+    );
   }
 
-  @override
-  void initState() {
-    super.initState();
-    loadCoffeeCountries();
-    services.SystemChrome.setPreferredOrientations([
-      services.DeviceOrientation.portraitDown,
-      services.DeviceOrientation.portraitUp,
-    ]);
-  }
-
-  void loadCoffeeCountries() async {
-    String jsonFilePath = 'assets/FullCoffeeCountries_GEOJSON.geojson';
+  Future<void> _loadCoffeeCountries() async {
+    const jsonFilePath = 'assets/FullCoffeeCountries_GEOJSON.geojson';
 
     try {
-      String contents = await services.rootBundle.loadString(jsonFilePath);
-      CoffeeCountries coffeeCountriesFromJson =
-          coffeeCountriesDataFromJson(contents);
+      final contents = await services.rootBundle.loadString(jsonFilePath);
+      final coffeeCountriesFromJson = coffeeCountriesDataFromJson(contents);
 
-      // Parse the JSON data
       setState(() {
         _coffeeCountries = coffeeCountriesFromJson;
-        _coffeeCountries!.features.sort((a, b) => a.properties.admin
-            .compareTo(b.properties.admin)); // Sort alphabetically
-        drawAllCoffeeCountries();
+        _coffeeCountries!.features.sort(
+          (a, b) => a.properties.admin.compareTo(b.properties.admin),
+        );
+        _drawAllCoffeeCountries();
       });
     } catch (error) {
       debugPrint('Error reading JSON file: $error');
     }
   }
 
-  void drawAllCoffeeCountries() {
+  void _drawAllCoffeeCountries() {
     if (_coffeeCountries != null) {
       for (var coffeeCountry in _coffeeCountries!.features) {
-        drawCoffeeCountriesPolygons(coffeeCountry);
+        _drawCoffeeCountriesPolygons(coffeeCountry);
       }
     }
   }
 
-  void drawCoffeeCountriesPolygons(CoffeeFeature feature) {
+  void _drawCoffeeCountriesPolygons(CoffeeFeature feature) {
     if (drawnCoffeeCountries.containsKey(feature.properties.admin)) {
       return;
     }
     drawnCoffeeCountries[feature.properties.admin] = true;
 
-    var polygonBuilder =
+    final polygonBuilder =
         PolygonBuilder.fromSpatialReference(SpatialReference.wgs84);
-    var polygonBuilderFromParts =
+    final polygonBuilderFromParts =
         PolygonBuilder.fromSpatialReference(SpatialReference.wgs84);
-
-    var coffeeFeatureCoordinates = feature.geometry.coordinates;
+    final coffeeFeatureCoordinates = feature.geometry.coordinates;
 
     if (coffeeFeatureCoordinates.length == 1) {
       // if country is a single part polygon
-      for (var coordinate in coffeeFeatureCoordinates[0]) {
-        var lat = coordinate[0];
-        var long = coordinate[1];
+      for (final coordinate in coffeeFeatureCoordinates[0]) {
+        final lat = coordinate[0];
+        final long = coordinate[1];
         polygonBuilder.addPoint(
           ArcGISPoint(
             x: lat,
@@ -238,16 +246,16 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         );
       }
-      drawAndNavigate(polygonBuilder, feature);
+      _drawAndNavigate(polygonBuilder, feature);
     } else {
-      // if country is a multipart polygon 
-      for (var part in coffeeFeatureCoordinates) {
-        var mutablePart =
+      // if country is a multipart polygon
+      for (final part in coffeeFeatureCoordinates) {
+        final mutablePart =
             MutablePart.withSpatialReference(SpatialReference.wgs84);
-        for (var coordinates in part) {
-          for (var coordinate in coordinates) {
-            var lat = coordinate[0];
-            var long = coordinate[1];
+        for (final coordinates in part) {
+          for (final coordinate in coordinates) {
+            final lat = coordinate[0];
+            final long = coordinate[1];
             mutablePart.addPoint(
               ArcGISPoint(
                 x: lat,
@@ -259,12 +267,12 @@ class _MyHomePageState extends State<MyHomePage> {
         }
         polygonBuilderFromParts.parts.addPart(mutablePart: mutablePart);
       }
-      drawAndNavigate(polygonBuilderFromParts, feature);
+      _drawAndNavigate(polygonBuilderFromParts, feature);
     }
   }
 
-  void drawAndNavigate(PolygonBuilder polygonBuilder, CoffeeFeature feature) {
-    var polygon = polygonBuilder.toGeometry();
-    mapPageKey.currentState?.addToGraphicsOverlay(polygon, feature);
+  void _drawAndNavigate(PolygonBuilder polygonBuilder, CoffeeFeature feature) {
+    final polygon = polygonBuilder.toGeometry();
+    _mapPageKey.currentState?.addToGraphicsOverlay(polygon, feature);
   }
 }
