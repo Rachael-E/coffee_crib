@@ -36,7 +36,7 @@ class CustomAlertDialog extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                '$countryName produces $countryBagsProduced bags of coffee annually.',
+                '$countryName produces around $countryBagsProduced bags of coffee annually.',
                 style: const TextStyle(
                   fontSize: 18,
                 ),

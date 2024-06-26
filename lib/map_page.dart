@@ -96,7 +96,7 @@ class MapPageState extends State<MapPage> {
         duration: 1);
   }
 
-  void addToGraphicsOverlay(Geometry geometry, CoffeeFeature coffeeFeature) {
+  void configureGraphic(Geometry geometry, CoffeeFeature coffeeFeature) {
     var colorManager = CountryColorManager();
     var generatedColor = colorManager.getUniqueColor();
 
@@ -115,8 +115,8 @@ class MapPageState extends State<MapPage> {
     final graphic = Graphic(geometry: geometry, symbol: simpleFillSymbol);
 
     graphic.attributes.addAll({
-      'coffeeCountryBags': coffeeFeature.properties.coffeeProduction,
-      'name': coffeeFeature.properties.admin,
+      'coffeeBagsProduced': coffeeFeature.properties.coffeeProduction,
+      'countryName': coffeeFeature.properties.admin,
     });
 
     _graphicsOverlay.graphics.add(graphic);

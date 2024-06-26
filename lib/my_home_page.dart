@@ -206,22 +206,18 @@ class _MyHomePageState extends State<MyHomePage> {
         _coffeeCountries!.features.sort(
           (a, b) => a.properties.admin.compareTo(b.properties.admin),
         );
-        _drawAllCoffeeCountries();
+        if (_coffeeCountries != null) {
+          for (var coffeeCountry in _coffeeCountries!.features) {
+            _buildPolygon(coffeeCountry);
+          }
+        }
       });
     } catch (error) {
       debugPrint('Error reading JSON file: $error');
     }
   }
 
-  void _drawAllCoffeeCountries() {
-    if (_coffeeCountries != null) {
-      for (var coffeeCountry in _coffeeCountries!.features) {
-        _drawCoffeeCountriesPolygons(coffeeCountry);
-      }
-    }
-  }
-
-  void _drawCoffeeCountriesPolygons(CoffeeFeature feature) {
+  void _buildPolygon(CoffeeFeature feature) {
     if (drawnCoffeeCountries.containsKey(feature.properties.admin)) {
       return;
     }
@@ -231,13 +227,13 @@ class _MyHomePageState extends State<MyHomePage> {
         PolygonBuilder.fromSpatialReference(SpatialReference.wgs84);
     final polygonBuilderFromParts =
         PolygonBuilder.fromSpatialReference(SpatialReference.wgs84);
-    final coffeeFeatureCoordinates = feature.geometry.coordinates;
+    final coffeeFeatureCoordinatesList = feature.geometry.coordinates;
 
-    if (coffeeFeatureCoordinates.length == 1) {
+    if (feature.geometry.type == CountryGeometryType.polygon) {
       // if country is a single part polygon
-      for (final coordinate in coffeeFeatureCoordinates[0]) {
-        final lat = coordinate[0];
-        final long = coordinate[1];
+      for (final coordinates in coffeeFeatureCoordinatesList[0]) {
+        final lat = coordinates[0];
+        final long = coordinates[1];
         polygonBuilder.addPoint(
           ArcGISPoint(
             x: lat,
@@ -246,16 +242,16 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         );
       }
-      _drawAndNavigate(polygonBuilder, feature);
-    } else {
+      _createGraphicFromPolygonBuilder(polygonBuilder, feature);
+    } else if (feature.geometry.type == CountryGeometryType.multiPolygon)  {
       // if country is a multipart polygon
-      for (final part in coffeeFeatureCoordinates) {
+      for (final part in coffeeFeatureCoordinatesList) {
         final mutablePart =
             MutablePart.withSpatialReference(SpatialReference.wgs84);
-        for (final coordinates in part) {
-          for (final coordinate in coordinates) {
-            final lat = coordinate[0];
-            final long = coordinate[1];
+        for (final list in part) {
+          for (final coordinates in list) {
+            final lat = coordinates[0];
+            final long = coordinates[1];
             mutablePart.addPoint(
               ArcGISPoint(
                 x: lat,
@@ -267,12 +263,12 @@ class _MyHomePageState extends State<MyHomePage> {
         }
         polygonBuilderFromParts.parts.addPart(mutablePart: mutablePart);
       }
-      _drawAndNavigate(polygonBuilderFromParts, feature);
+      _createGraphicFromPolygonBuilder(polygonBuilderFromParts, feature);
     }
   }
 
-  void _drawAndNavigate(PolygonBuilder polygonBuilder, CoffeeFeature feature) {
+  void _createGraphicFromPolygonBuilder(PolygonBuilder polygonBuilder, CoffeeFeature feature) {
     final polygon = polygonBuilder.toGeometry();
-    _mapPageKey.currentState?.addToGraphicsOverlay(polygon, feature);
+    _mapPageKey.currentState?.configureGraphic(polygon, feature);
   }
 }

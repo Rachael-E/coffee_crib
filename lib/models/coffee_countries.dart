@@ -97,7 +97,7 @@ class CoffeeFeature {
 }
 
 class CoffeeCountryGeometry {
-    GeometryType type;
+    CountryGeometryType type;
     List<List<List<dynamic>>> coordinates;
 
     CoffeeCountryGeometry({
@@ -116,14 +116,14 @@ class CoffeeCountryGeometry {
     };
 }
 
-enum GeometryType {
+enum CountryGeometryType {
     multiPolygon,
     polygon
 }
 
 final geometryTypeValues = EnumValues({
-    "MultiPolygon": GeometryType.multiPolygon,
-    "Polygon": GeometryType.polygon
+    "MultiPolygon": CountryGeometryType.multiPolygon,
+    "Polygon": CountryGeometryType.polygon
 });
 
 class FeatureProperties {
