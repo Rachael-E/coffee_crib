@@ -39,7 +39,7 @@ class MapPageState extends State<MapPage> {
 
   void zoomToCountry(CoffeeFeature feature) {
     for (var graphic in _graphicsOverlay.graphics) {
-      if (feature.properties.admin == graphic.attributes['name']) {
+      if (feature.properties.admin == graphic.attributes['countryName']) {
         _changeViewpoint(_expandedEnvelope(graphic));
       }
     }
@@ -65,10 +65,10 @@ class MapPageState extends State<MapPage> {
     _changeViewpoint(_expandedEnvelope(graphic));
 
     final countryBagsProducedDouble =
-        double.parse(graphic.attributes['coffeeCountryBags']);
+        double.parse(graphic.attributes['coffeeBagsProduced']);
     final formatter = NumberFormat('#,###,000');
     final countryBagsProduced = formatter.format(countryBagsProducedDouble);
-    final countryName = graphic.attributes['name'];
+    final countryName = graphic.attributes['countryName'];
 
     _showCustomDialog(countryName, countryBagsProduced);
   }
