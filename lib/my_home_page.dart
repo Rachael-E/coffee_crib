@@ -3,6 +3,7 @@ import 'package:coffee_crib/models/country_color_manager.dart';
 import 'package:coffee_crib/widgets/custom_alert_dialog.dart';
 import 'package:coffee_crib/widgets/custom_drawer.dart';
 import 'package:coffee_crib/models/coffee_countries.dart';
+import 'package:coffee_crib/widgets/custom_floating_action_button.dart';
 import 'package:coffee_crib/widgets/custom_sliding_up_panel.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -45,23 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
             onTap: _selectGraphic,
             onMapViewReady: _onMapViewReady,
           ),
-          Positioned(
-            bottom: MediaQuery.of(context).size.height * 0.1,
-            right: 16,
-            child: FloatingActionButton(
-              backgroundColor: _fabColor,
-              onPressed: () => {
-                _mapViewController.setViewpointAnimated(
-                  Viewpoint.fromCenter(
-                    ArcGISPoint(x: 0, y: 0),
-                    scale: 100000000,
-                  ),
-                  duration: 1,
-                )
-              },
-              child: const Icon(Icons.zoom_out_map, color: Colors.black),
-            ),
-          ),
+          CustomFloatingActionButton(mapViewController: _mapViewController),
           CustomSlidingUpPanel(
             coffeeFeatures: widget.coffeeFeatures,
             zoomToCountryCallback: _zoomToCountry,
