@@ -1,12 +1,17 @@
 import 'package:coffee_crib/my_home_page.dart';
 import 'package:flutter/material.dart';
-import 'package:coffee_crib/env/env.dart';
 import 'package:arcgis_maps/arcgis_maps.dart';
 
-
-void main() {
-  ArcGISEnvironment.apiKey = Env.apiKey;
-
+void main() async {
+  // Supply your apiKey using the --dart-define-from-file command line argument
+  const apiKey = String.fromEnvironment('API_KEY');
+  // Alternatively, replace the above line with the following and hard-code your apiKey here:
+  // const apiKey = 'your_api_key_here';
+  if (apiKey.isEmpty) {
+    throw Exception('apiKey undefined');
+  } else {
+    ArcGISEnvironment.apiKey = apiKey;
+  }
   runApp(const MyApp());
 }
 
