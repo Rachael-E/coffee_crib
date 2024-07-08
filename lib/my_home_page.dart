@@ -6,28 +6,20 @@ import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+  const MyHomePage({super.key, required this.coffeeFeatures});
+  final List<CoffeeFeature> coffeeFeatures;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  CoffeeCountries? _coffeeCountries;
-  late final GlobalKey<MapPageState> _mapPageKey = GlobalKey<MapPageState>();
   final PanelController _panelController = PanelController();
   final ScrollController _scrollController = ScrollController();
-  Map<String, bool> drawnCoffeeCountries = {};
 
   static const _appBarColor = Color.fromARGB(255, 112, 137, 112);
   static const _fabCardColor = Color.fromARGB(255, 233, 223, 221);
   static const _panelHandleColor = Color.fromARGB(108, 121, 85, 72);
-
-  @override
-  void initState() {
-    super.initState();
-    _loadCoffeeCountries();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -189,26 +181,6 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Future<void> _loadCoffeeCountries() async {
-    const jsonFilePath = 'assets/FullCoffeeCountries_GEOJSON.geojson';
-
-    try {
-      final contents = await services.rootBundle.loadString(jsonFilePath);
-      final coffeeCountriesFromJson = coffeeCountriesDataFromJson(contents);
-
-      setState(() {
-        _coffeeCountries = coffeeCountriesFromJson;
-        _coffeeCountries!.features.sort(
-          (a, b) => a.properties.admin.compareTo(b.properties.admin),
-        );
-        if (_coffeeCountries != null) {
-          for (var coffeeCountry in _coffeeCountries!.features) {
-            _buildPolygon(coffeeCountry);
-          }
-        }
-      });
-    } catch (error) {
-      debugPrint('Error reading JSON file: $error');
     }
   }
 
