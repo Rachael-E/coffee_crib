@@ -3,9 +3,9 @@ import 'package:coffee_crib/models/country_color_manager.dart';
 import 'package:coffee_crib/widgets/custom_alert_dialog.dart';
 import 'package:coffee_crib/widgets/custom_drawer.dart';
 import 'package:coffee_crib/models/coffee_countries.dart';
+import 'package:coffee_crib/widgets/custom_sliding_up_panel.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.coffeeFeatures});
@@ -18,12 +18,9 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final _mapViewController = ArcGISMapView.createController();
   final _graphicsOverlay = GraphicsOverlay();
-  final _panelController = PanelController();
-  final _scrollController = ScrollController();
 
   static const _appBarColor = Color.fromARGB(255, 112, 137, 112);
-  static const _fabCardColor = Color.fromARGB(255, 233, 223, 221);
-  static const _panelHandleColor = Color.fromARGB(108, 121, 85, 72);
+  static const _fabColor = Color.fromARGB(255, 233, 223, 221);
   final _borderSymbol = SimpleLineSymbol(
       style: SimpleLineSymbolStyle.solid, color: Colors.black, width: 1.0);
   final _colorManager = CountryColorManager();
@@ -42,7 +39,10 @@ class _MyHomePageState extends State<MyHomePage> {
             onMapViewReady: _onMapViewReady,
           ),
           _buildFloatingActionButton(),
-          _buildSlidingUpPanel(),
+          CustomSlidingUpPanel(
+            coffeeFeatures: widget.coffeeFeatures,
+            zoomToCountryCallback: _zoomToCountry,
+          ),
         ],
       ),
     );
@@ -225,106 +225,4 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget _buildSlidingUpPanel() {
-    return SlidingUpPanel(
-      controller: _panelController,
-      minHeight: MediaQuery.of(context).size.height * 0.08,
-      maxHeight: MediaQuery.of(context).size.height * 0.4,
-      panel: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(
-                'assets/coffee_background.png'), // AI-generated image
-            fit: BoxFit.cover,
-          ),
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        child: _buildPanelContent(),
-      ),
-      isDraggable: true,
-    );
-  }
-
-  Widget _buildPanelContent() {
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.symmetric(vertical: 12.0),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 30,
-                    height: 5,
-                    decoration: const BoxDecoration(
-                      color: _panelHandleColor,
-                      borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 10.0,
-              ),
-              const Text(
-                "Where in the world is coffee produced?",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16.0,
-                ),
-              ),
-            ],
-          ),
-        ),
-        Expanded(
-          child: _buildCountryContainer(),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildCountryContainer() {
-    return GridView.builder(
-      padding: const EdgeInsets.all(8.0),
-      controller: _scrollController,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 3,
-        crossAxisSpacing: 8.0,
-        mainAxisSpacing: 8.0,
-      ),
-      itemCount: widget.coffeeFeatures.length,
-      itemBuilder: (context, index) {
-        final coffeeCountry = widget.coffeeFeatures[index];
-        return GestureDetector(
-          onTap: () => _zoomToCountry(coffeeCountry),
-          child: Card(
-            color: _fabCardColor,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15.0),
-            ),
-            elevation: 5,
-            child: Container(
-              padding: const EdgeInsets.all(5.0),
-              child: Center(
-                child: Text(
-                  coffeeCountry.properties.admin,
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 2,
-                  style: const TextStyle(
-                    fontSize: 14.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
 }
