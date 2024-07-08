@@ -29,7 +29,14 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _buildAppBar(),
+      appBar: AppBar(
+        centerTitle: false,
+        foregroundColor: Colors.white,
+        title: const Text("Coffee Countries"),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        flexibleSpace: Container(color: _appBarColor),
+      ),
       drawer: const CustomDrawer(),
       body: Stack(
         children: [
@@ -38,7 +45,23 @@ class _MyHomePageState extends State<MyHomePage> {
             onTap: _selectGraphic,
             onMapViewReady: _onMapViewReady,
           ),
-          _buildFloatingActionButton(),
+          Positioned(
+            bottom: MediaQuery.of(context).size.height * 0.1,
+            right: 16,
+            child: FloatingActionButton(
+              backgroundColor: _fabColor,
+              onPressed: () => {
+                _mapViewController.setViewpointAnimated(
+                  Viewpoint.fromCenter(
+                    ArcGISPoint(x: 0, y: 0),
+                    scale: 100000000,
+                  ),
+                  duration: 1,
+                )
+              },
+              child: const Icon(Icons.zoom_out_map, color: Colors.black),
+            ),
+          ),
           CustomSlidingUpPanel(
             coffeeFeatures: widget.coffeeFeatures,
             zoomToCountryCallback: _zoomToCountry,
@@ -188,41 +211,4 @@ class _MyHomePageState extends State<MyHomePage> {
       },
     );
   }
-
-  AppBar _buildAppBar() {
-    return AppBar(
-      iconTheme: const IconThemeData(color: Colors.white),
-      title: const Row(
-        children: [
-          SizedBox(width: 10),
-          Text(
-            "Coffee Countries",
-            style: TextStyle(color: Colors.white),
-          ),
-        ],
-      ),
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      flexibleSpace: Container(color: _appBarColor),
-    );
-  }
-
-  Widget _buildFloatingActionButton() {
-    return Positioned(
-      bottom: MediaQuery.of(context).size.height * 0.1,
-      right: 16,
-      child: FloatingActionButton(
-        backgroundColor: _fabCardColor,
-        child: const Icon(Icons.zoom_out_map, color: Colors.black),
-        onPressed: () => _mapViewController.setViewpointAnimated(
-          Viewpoint.fromCenter(
-            ArcGISPoint(x: 0, y: 0),
-            scale: 100000000,
-          ),
-          duration: 1,
-        ),
-      ),
-    );
-  }
-
 }
