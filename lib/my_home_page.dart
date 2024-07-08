@@ -3,7 +3,6 @@ import 'package:coffee_crib/components/custom_drawer.dart';
 import 'package:coffee_crib/models/coffee_countries.dart';
 import 'package:coffee_crib/map_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' as services;
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -28,10 +27,6 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     _loadCoffeeCountries();
-    services.SystemChrome.setPreferredOrientations([
-      services.DeviceOrientation.portraitDown,
-      services.DeviceOrientation.portraitUp,
-    ]);
   }
 
   @override

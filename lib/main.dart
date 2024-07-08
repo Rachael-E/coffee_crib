@@ -1,6 +1,7 @@
 import 'package:coffee_crib/my_home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:flutter/services.dart' as services;
 
 void main() async {
   // Supply your apiKey using the --dart-define-from-file command line argument
@@ -12,6 +13,10 @@ void main() async {
   } else {
     ArcGISEnvironment.apiKey = apiKey;
   }
+  services.SystemChrome.setPreferredOrientations([
+    services.DeviceOrientation.portraitDown,
+    services.DeviceOrientation.portraitUp,
+  ]);
   runApp(const MyApp());
 }
 
