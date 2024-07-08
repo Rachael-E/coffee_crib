@@ -21,7 +21,6 @@ class _MyHomePageState extends State<MyHomePage> {
   final _graphicsOverlay = GraphicsOverlay();
 
   static const _appBarColor = Color.fromARGB(255, 112, 137, 112);
-  static const _fabColor = Color.fromARGB(255, 233, 223, 221);
   final _borderSymbol = SimpleLineSymbol(
       style: SimpleLineSymbolStyle.solid, color: Colors.black, width: 1.0);
   final _colorManager = CountryColorManager();
