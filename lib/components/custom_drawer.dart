@@ -28,7 +28,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
         ),
         ListTile(
           leading: Icon(Icons.info),
-          title: Text('Built with the ArcGIS Maps SDK for Flutter (beta)',
+          title: Text('Built with the ArcGIS Maps SDK for Flutter beta',
           
           ),
         ),

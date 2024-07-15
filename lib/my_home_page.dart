@@ -28,10 +28,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     _loadCoffeeCountries();
-    services.SystemChrome.setPreferredOrientations([
-      services.DeviceOrientation.portraitDown,
-      services.DeviceOrientation.portraitUp,
-    ]);
+
   }
 
   @override
