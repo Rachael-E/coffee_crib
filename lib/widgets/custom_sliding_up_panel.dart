@@ -1,6 +1,6 @@
 import 'package:coffee_crib/models/coffee_countries.dart';
 import 'package:flutter/material.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart'; // this product includes software developed by Akshath Jain (https://akshathjain.com)
 
 class CustomSlidingUpPanel extends StatelessWidget {
   final List<CoffeeFeature> coffeeFeatures;
@@ -58,21 +58,19 @@ class CustomSlidingUpPanel extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(
-                height: 10.0,
-              ),
+              const SizedBox(height: 10.0),
               const Text(
                 'Where in the world is coffee produced?',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 16.0,
+                  fontSize: 16.0
                 ),
               ),
             ],
           ),
         ),
         Expanded(
-          child: _buildCountryContainer(),
+          child: _buildCountryContainer()
         ),
       ],
     );

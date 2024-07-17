@@ -1,3 +1,18 @@
+//
+// Copyright 2024 Esri
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//   https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:coffee_crib/models/country_color_manager.dart';
@@ -33,10 +48,8 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         centerTitle: false,
         foregroundColor: Colors.white,
-        title: const Text("Coffee Countries"),
+        title: const Text('Coffee Countries'),
         backgroundColor: Colors.transparent,
-        elevation: 0,
-        flexibleSpace: Container(color: _appBarColor),
       ),
       drawer: const CustomDrawer(),
       body: Stack(
@@ -135,9 +148,9 @@ class _MyHomePageState extends State<MyHomePage> {
     Geometry? polygon;
 
     if (feature.geometry.type == CountryGeometryType.polygon) {
+      // if country is a single part polygon
       final polygonBuilder =
           PolygonBuilder.fromSpatialReference(SpatialReference.wgs84);
-      // if country is a single part polygon
       for (final coordinates in coffeeFeatureCoordinatesList[0]) {
         final lat = coordinates[0];
         final long = coordinates[1];
@@ -151,9 +164,9 @@ class _MyHomePageState extends State<MyHomePage> {
       }
       polygon = polygonBuilder.toGeometry();
     } else if (feature.geometry.type == CountryGeometryType.multiPolygon) {
+      // if country is a multipart polygon
       final polygonBuilderFromParts =
           PolygonBuilder.fromSpatialReference(SpatialReference.wgs84);
-      // if country is a multipart polygon
       for (final part in coffeeFeatureCoordinatesList) {
         final mutablePart =
             MutablePart.withSpatialReference(SpatialReference.wgs84);
