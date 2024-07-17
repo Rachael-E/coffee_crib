@@ -36,7 +36,6 @@ class _MyHomePageState extends State<MyHomePage> {
   final _mapViewController = ArcGISMapView.createController();
   final _graphicsOverlay = GraphicsOverlay();
 
-  static const _appBarColor = Color.fromARGB(255, 112, 137, 112);
   final _borderSymbol = SimpleLineSymbol(
       style: SimpleLineSymbolStyle.solid, color: Colors.black, width: 1.0);
   final _colorManager = CountryColorManager();
