@@ -1,5 +1,6 @@
 // JSON serializer code generated from https://app.quicktype.io/
 //
+// ignore_for_file: prefer_single_quotes
 //    
 
 import 'dart:convert';

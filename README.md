@@ -2,7 +2,7 @@
 
 A cross platform mobile app for iOS and Android that shows the largest coffee producing countries in the world. 
 
-This app is built with the [ArcGIS Maps SDK for Flutter (beta)](https://www.esri.com/arcgis-blog/products/developers/announcements/announcing-arcgis-maps-sdk-for-flutter-beta/).
+This app is built with the [ArcGIS Maps SDK for Flutter beta](https://www.esri.com/arcgis-blog/products/developers/announcements/announcing-arcgis-maps-sdk-for-flutter-beta/).
 
 ![Mobile app screen showing world map](CoffeeCrib.png)
 
@@ -10,7 +10,15 @@ This app is built with the [ArcGIS Maps SDK for Flutter (beta)](https://www.esri
 
 The app can be run on an iOS or Android simulator or device. 
 
+- Visit [Esri's Early Adopter site](https://earlyadopter.esri.com/enter/) to download the ArcGIS Maps SDK for Flutter package. Follow the instructions to unpack it. 
+- You will also need an API Key access token to run this app.
+    - Follow the [Create an API Key tutorial](https://developers.arcgis.com/documentation/security-and-authentication/api-key-authentication/tutorials/create-an-api-key/) and copy your generated API Key.
+    - Add the new API key directly to `main.dart` (not recommended for production use) or create an environment JSON file that can be loaded with `flutter run --dart-define-from-file=path/to/json/file.json`
+    - The JSON file should be of format: `{ "API_KEY": "your_api_key_here"}`
+- Clone or download this repository to the same directory as the arcgis_maps_package
 - Open the project in VSCode
+- Use `flutter pub upgrade` to configure the dependencies
+- Use `dart run arcgis_maps install` to install the package
 - Ensure a simulator is running or a device is connected to your development machine
 - Run or debug the app to launch it
 
