@@ -49,6 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
         foregroundColor: Colors.white,
         title: const Text('Coffee Countries'),
         backgroundColor: Colors.transparent,
+        flexibleSpace: Container(color: const Color.fromARGB(255, 112, 137, 112)),
       ),
       drawer: const CustomDrawer(),
       body: Stack(
