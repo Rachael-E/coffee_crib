@@ -34,3 +34,7 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+## Data
+
+This app was built using country polygons in GeoJSON format sourced from https://datahub.io/core/geo-countries and modified in ArcGIS Pro to include coffee producing data, averaged from a range of internet data sources. 
