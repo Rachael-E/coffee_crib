@@ -1,8 +1,8 @@
 # coffee_crib
 
-A cross platform mobile app for iOS and Android that shows the largest coffee producing countries in the world. 
+A cross platform mobile app for iOS and Android that shows the largest coffee producing countries in the world, built with the [ArcGIS Maps SDK for Flutter beta](https://www.esri.com/arcgis-blog/products/developers/announcements/announcing-arcgis-maps-sdk-for-flutter-beta/).
 
-This app is built with the [ArcGIS Maps SDK for Flutter beta](https://www.esri.com/arcgis-blog/products/developers/announcements/announcing-arcgis-maps-sdk-for-flutter-beta/).
+You can read more about this app and how it was built in the [Mapping where coffee comes from with the Flutter Maps SDK beta](https://www.esri.com/arcgis-blog/products/developers/developers/mapping-coffee-flutter-maps-sdk/) on ArcGIS Blog.
 
 ![Mobile app screen showing world map](CoffeeCrib.png)
 
